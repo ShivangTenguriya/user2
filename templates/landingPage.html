@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Find Repair Service Near You</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding-top: 70px; /* Space for navbar */
+      display: flex;
+      height: 100vh;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    /* Navbar */
+    .navbar {
+      width: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: #007bff;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.7rem 1.5rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo {
+      height: 40px;
+      width: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .company-name {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: white;
+    }
+
+    .navbar-right .support-link {
+      font-size: 0.9rem;
+      color: #e6f2ff;
+      cursor: pointer;
+    }
+
+    /* Container */
+    .container {
+      background: white;
+      padding: 2rem 2.5rem;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+
+    h1 {
+      color: #007bff;
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+    }
+
+    .info {
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+      color: #444;
+    }
+
+    select {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      font-size: 1rem;
+      border: 1.7px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      font-family: inherit;
+      transition: border-color 0.3s ease;
+      appearance: none;
+      background: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><polygon points="6,9 12,15 18,9" fill="%23777"/></svg>') no-repeat right 1rem center / 1rem auto;
+      cursor: pointer;
+    }
+
+    select:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 25px;
+      padding: 0.9rem 2rem;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+
+    button:disabled {
+      background-color: #a3c1ff;
+      cursor: not-allowed;
+    }
+
+    button:hover:not(:disabled) {
+      background-color: #0056b3;
+    }
+
+    .loading-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #007bff;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      animation: spin 1s linear infinite;
+      margin: 1rem auto 2rem;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg);}
+      100% { transform: rotate(360deg);}
+    }
+
+    .error {
+      color: #d9534f;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="navbar-left">
+      <img src="{{ url_for('static', filename='C.png') }}" alt="Company Logo" class="logo" />
+      <span class="company-name">Care n Trust</span>
+    </div>
+    <div class="navbar-right">
+      <span class="support-link">Support</span>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <div class="container">
+    <h1>Find Repair Service Near You</h1>
+
+    <div id="locationStatus" class="info">
+      Requesting your location...
+      <div class="loading-spinner" id="spinner"></div>
+    </div>
+
+    <div id="locationError" class="error" style="display:none;"></div>
+
+    <form id="landingForm" style="display:none;">
+      <label for="gadgetSelect" style="font-weight:600; margin-bottom: 0.5rem; display: block;">Select Gadget Type</label>
+      <select id="gadgetSelect" name="gadget_type" required>
+        <option value="" disabled selected>-- Select Gadget --</option>
+        <option value="mobile">Mobile Phone</option>
+        <option value="laptop">Laptop</option>
+        <option value="tablet">Tablet</option>
+        <option value="other">Other</option>
+      </select>
+
+      <button type="submit" disabled id="nextButton">Next</button>
+    </form>
+  </div>
+
+  <script>
+    const locationStatus = document.getElementById('locationStatus');
+    const locationError = document.getElementById('locationError');
+    const spinner = document.getElementById('spinner');
+    const landingForm = document.getElementById('landingForm');
+    const nextButton = document.getElementById('nextButton');
+    const gadgetSelect = document.getElementById('gadgetSelect');
+
+    let userLatitude = null;
+    let userLongitude = null;
+
+    // Enable Next button only if gadget is selected
+    gadgetSelect.addEventListener('change', () => {
+      nextButton.disabled = !gadgetSelect.value;
+    });
+
+    function success(position) {
+      userLatitude = position.coords.latitude;
+      userLongitude = position.coords.longitude;
+
+      locationStatus.textContent = "Location fetched successfully!";
+      spinner.style.display = 'none';
+
+      // Show form now
+      landingForm.style.display = 'block';
+    }
+
+    function error(err) {
+      spinner.style.display = 'none';
+      locationStatus.style.display = 'none';
+      locationError.style.display = 'block';
+
+      switch(err.code) {
+        case err.PERMISSION_DENIED:
+          locationError.textContent = "Location permission denied. Please allow location access to find nearby providers.";
+          break;
+        case err.POSITION_UNAVAILABLE:
+          locationError.textContent = "Location information is unavailable.";
+          break;
+        case err.TIMEOUT:
+          locationError.textContent = "Location request timed out. Please try again.";
+          break;
+        default:
+          locationError.textContent = "An unknown error occurred while fetching location.";
+          break;
+      }
+    }
+
+    // Request user location on page load
+    window.onload = () => {
+      if (!navigator.geolocation) {
+        locationStatus.textContent = "Geolocation is not supported by your browser.";
+        spinner.style.display = 'none';
+      } else {
+        navigator.geolocation.getCurrentPosition(success, error, {timeout: 10000});
+      }
+    };
+
+    // Handle form submission
+    landingForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      if (!gadgetSelect.value) return;
+
+      const url = `/login?lat=${encodeURIComponent(userLatitude)}&lon=${encodeURIComponent(userLongitude)}&gadget=${encodeURIComponent(gadgetSelect.value)}`;
+      window.location.href = url;
+    });
+  </script>
+
+</body>
+</html>

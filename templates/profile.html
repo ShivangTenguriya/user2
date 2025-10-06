@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>User Profile</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background: #f5f7fa;
+      color: #333;
+    }
+
+    /* Top navbar */
+    nav {
+      background-color: #007bff;
+      padding: 1rem 2rem;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 3px 7px rgba(0,0,0,0.15);
+    }
+
+    nav .logo {
+      font-weight: 700;
+      font-size: 1.5rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    nav .profile-nav {
+      display: flex;
+      gap: 1.3rem;
+    }
+
+    nav .profile-nav button {
+      background: transparent;
+      border: none;
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 0.5rem 0.8rem;
+      border-radius: 6px;
+      transition: background-color 0.3s ease;
+    }
+
+    nav .profile-nav button:hover,
+    nav .profile-nav button.active {
+      background-color: rgba(255, 255, 255, 0.25);
+    }
+
+    main {
+      max-width: 900px;
+      margin: 2rem auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      padding: 2rem 2.5rem;
+      min-height: 400px;
+    }
+
+    h2 {
+      color: #007bff;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Example content styling */
+    .request-list {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .request-list li {
+      border-bottom: 1px solid #ddd;
+      padding: 0.8rem 0;
+      font-size: 1rem;
+    }
+
+    .request-list li:last-child {
+      border-bottom: none;
+    }
+
+    /* Edit profile form */
+    form label {
+      display: block;
+      margin: 1rem 0 0.4rem;
+      font-weight: 600;
+    }
+
+    header {
+  background-color: #007bff;
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  /* Added to align items properly */
+  justify-content: flex-start;
+}
+
+header button {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+header h1 {
+  margin: 0;
+  flex-grow: 1;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.5rem;
+  user-select: none;
+}
+
+.company-logo {
+  flex-shrink: 0;
+}
+
+.review-form {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #ccc;
+}
+
+.review-form .stars {
+  display: inline-block;
+  font-size: 1.5rem;
+  color: #ccc;
+  cursor: pointer;
+  user-select: none;
+  margin: 0.5rem 0;
+}
+
+.review-form .star.selected {
+  color: gold;
+}
+
+.review-form textarea {
+  display: block;
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.review-form button {
+  margin-top: 0.7rem;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.review-form button:hover {
+  background-color: #218838;
+}
+
+
+    form input[type="text"],
+    form input[type="email"],
+    form input[type="tel"] {
+      width: 100%;
+      padding: 0.6rem 1rem;
+      border: 1.7px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+
+    form input:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+
+    form button {
+      margin-top: 1.5rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 0.9rem 2rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    form button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+  <div class="logo-container" onclick="window.location.href='/'" style="display: flex; align-items: center; cursor: pointer; user-select: none;">
+    <img src="{{ url_for('static', filename='C.png') }}" alt="Company Logo"
+     style="height: 40px; width: 40px; margin-right: 0.8rem; border-radius: 6px;" />
+
+    <div class="logo" style="font-weight: 700; font-size: 1.5rem; color: rgb(255, 255, 255);">
+      Care n Trust
+    </div>
+  </div>
+
+  <div class="profile-nav" role="tablist" aria-label="Profile navigation">
+    <button role="tab" aria-selected="true" id="tab-new" aria-controls="section-new" class="active" onclick="showSection('new')">New Requests</button>
+    <button role="tab" aria-selected="false" id="tab-pending" aria-controls="section-pending" onclick="showSection('pending')">Pending Requests</button>
+    <button id="tab-rescheduled" onclick="showSection('rescheduled')">Rescheduled</button>
+    <button role="tab" aria-selected="false" id="tab-completed" aria-controls="section-completed" onclick="showSection('completed')">Completed Requests</button>
+    <button role="tab" aria-selected="false" id="tab-cancelled" aria-controls="section-cancelled" onclick="showSection('cancelled')">Cancelled Requests</button>
+    <button role="tab" aria-selected="false" id="tab-edit" aria-controls="section-edit" onclick="showSection('edit')">Edit Profile</button>
+  </div>
+</nav>
+
+
+<main>
+  <section id="section-new" role="tabpanel" aria-labelledby="tab-new">
+    <h2>New Requests</h2>
+    <ul class="request-list" id="newRequestsList"></ul>
+  </section>
+
+  <section id="section-pending" role="tabpanel" aria-labelledby="tab-pending" hidden>
+    <h2>Pending Requests</h2>
+    <ul class="request-list" id="pendingRequestsList"></ul>
+  </section>
+
+  <section id="section-rescheduled" role="tabpanel" aria-labelledby="tab-rescheduled" hidden>
+  <h2>Rescheduled Requests</h2>
+  <ul class="request-list" id="rescheduledRequestsList"></ul>
+</section>
+
+  <section id="section-completed" role="tabpanel" aria-labelledby="tab-completed" hidden>
+    <h2>Completed Requests</h2>
+    <ul class="request-list" id="completedRequestsList"></ul>
+  </section>
+
+  <section id="section-cancelled" role="tabpanel" aria-labelledby="tab-cancelled" hidden>
+    <h2>Cancelled Requests</h2>
+    <ul class="request-list" id="cancelledRequestsList"></ul>
+  </section>
+
+  <section id="section-edit" role="tabpanel" aria-labelledby="tab-edit" hidden>
+    <h2>Edit Profile</h2>
+<form method="POST" action="{{ url_for('profile') }}">
+  <label for="full_name">Full Name</label>
+  <input
+    type="text"
+    id="full_name"
+    name="full_name"
+    placeholder="Your full name"
+    value="{{ user.username }}"
+    required
+  />
+
+  <label for="email">Email</label>
+  <input
+    type="email"
+    id="email"
+    name="email"
+    placeholder="you@example.com"
+    value="{{ user.username }}"
+    required
+  />
+
+  <label for="phone">Mobile Number</label>
+  <input
+    type="tel"
+    id="phone"
+    name="phone"
+    pattern="[0-9]{10}"
+    placeholder="10-digit mobile number"
+    value="{{ user.mobile_number }}"
+    required
+  />
+
+  <button type="submit">Save Changes</button>
+</form>
+
+  </section>
+</main>
+
+<script>
+
+  document.addEventListener('DOMContentLoaded', () => {
+  // Request Notification permission if not already granted
+  if (Notification.permission !== 'granted') {
+    Notification.requestPermission().then(permission => {
+      if (permission === 'granted') {
+        console.log('Notification permission granted');
+      }
+    });
+  }
+
+  fetchAppointments();
+});
+
+const notifiedAppointments = new Set();
+
+function scheduleRescheduleNotifications(datetimeStr, appointmentId) {
+  if (notifiedAppointments.has(appointmentId)) return;
+  notifiedAppointments.add(appointmentId);
+
+  const scheduleTime = new Date(datetimeStr);
+  if (isNaN(scheduleTime)) return;
+
+  const now = new Date();
+  const timeDiff = scheduleTime.getTime() - now.getTime();
+
+  if (timeDiff <= 0) return;
+
+  const notify = (delay, message) => {
+    if (delay > 0) {
+      setTimeout(() => {
+        if (Notification.permission === 'granted') {
+          new Notification(message);
+        } else {
+          alert(message);
+        }
+      }, delay);
+    }
+  };
+
+  notify(timeDiff - 30 * 60 * 1000, `⏰ Appointment #${appointmentId} is in 30 minutes!`);
+  notify(timeDiff - 10 * 60 * 1000, `🔔 Appointment #${appointmentId} is in 10 minutes!`);
+  notify(timeDiff, `📅 It's time for Appointment #${appointmentId}!`);
+}
+
+function processAppointments(appointments) {
+  appointments.forEach(app => {
+    if (app.status === 'Pending_Rescheduled' && app.reschedule_time) {
+      scheduleRescheduleNotifications(app.reschedule_time, app.id);
+    }
+  });
+}
+
+function setupStarRating() {
+  document.querySelectorAll('.review-form .star').forEach(star => {
+    star.addEventListener('click', () => {
+      const value = parseInt(star.dataset.value);
+      const stars = star.parentNode.querySelectorAll('.star');
+      stars.forEach(s => s.classList.remove('selected'));
+      for (let i = 0; i < value; i++) {
+        stars[i].classList.add('selected');
+      }
+      star.parentNode.setAttribute('data-rating', value);
+    });
+  });
+}
+
+function submitReview(appointmentId, button) {
+  const form = button.closest('.review-form');
+  const rating = parseInt(form.querySelector('.stars').getAttribute('data-rating'));
+  const comment = form.querySelector('.review-comment').value;
+
+  if (!rating) {
+    alert("Please select a star rating before submitting.");
+    return;
+  }
+
+  fetch(`/appointments/${appointmentId}/review`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    credentials: 'include',
+    body: JSON.stringify({ rating, comment })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.message) {
+      alert('Thank you for your review!');
+      fetchAppointments(); // Refresh the appointment list
+    } else {
+      alert(data.error || 'Failed to submit review');
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    alert('Something went wrong. Try again.');
+  });
+}
+
+function showSection(section) {
+  const tabs = document.querySelectorAll('nav .profile-nav button');
+  const sections = document.querySelectorAll('main > section');
+
+  tabs.forEach(tab => {
+    const isActive = tab.id === `tab-${section}`;
+    tab.classList.toggle('active', isActive);
+  });
+
+  sections.forEach(sec => {
+    sec.hidden = sec.id !== `section-${section}`;
+  });
+}
+
+function fetchAppointments() {
+  fetch('/user/appointments', { credentials: 'include' })
+    .then(res => res.json())
+    .then(data => {
+      insertAppointments('newRequestsList', data.New || []);
+      insertAppointments('pendingRequestsList', data.Pending || []);
+      insertAppointments('completedRequestsList', data.Completed || []);
+      insertAppointments('cancelledRequestsList', data.Cancelled || []);
+      insertAppointments('rescheduledRequestsList', data.Rescheduled || []);
+
+      // Schedule notifications for Pending_Rescheduled appointments in Pending and Rescheduled lists
+      if (data.Pending) processAppointments(data.Pending);
+      if (data.Rescheduled) processAppointments(data.Rescheduled);
+    })
+    .catch(err => {
+      console.error('Error fetching appointments:', err);
+    });
+}
+
+function acceptReschedule(id) {
+  fetch(`/appointments/${id}/accept_reschedule`, {
+    method: 'POST',
+    credentials: 'include'
+  })
+  .then(res => {
+    if (!res.ok) throw new Error('Accept failed');
+    return res.json();
+  })
+  .then(() => {
+    alert('Rescheduled appointment accepted.');
+    fetchAppointments();
+  })
+  .catch(() => alert('Failed to accept.'));
+}
+
+function cancelReschedule(id) {
+  if (!confirm('Are you sure you want to cancel this rescheduled appointment?')) return;
+
+  fetch(`/appointments/${id}/cancel_reschedule`, {
+    method: 'POST',
+    credentials: 'include'
+  })
+  .then(res => {
+    if (!res.ok) throw new Error('Cancel failed');
+    return res.json();
+  })
+  .then(() => {
+    alert('Rescheduled appointment cancelled.');
+    fetchAppointments();
+  })
+  .catch(() => alert('Failed to cancel.'));
+}
+
+function insertAppointments(listId, appointments) {
+  const list = document.getElementById(listId);
+  list.innerHTML = '';
+  if (!appointments.length) {
+    list.innerHTML = '<li>No request found.</li>';
+    return;
+  }
+
+  appointments.forEach(app => {
+    const li = document.createElement('li');
+    let reviewFormHTML = '';
+    let rescheduleActions = '';
+
+    // Add Accept/Cancel buttons for Rescheduled
+    if (app.status === 'Rescheduled') {
+      rescheduleActions = `
+        <br>
+        <button onclick="acceptReschedule(${app.id})">Accept</button>
+        <button onclick="cancelReschedule(${app.id})">Cancel</button>
+      `;
+    }
+
+    // Review form for Completed without review
+    if (app.status === 'Completed' && !app.has_reviewed) {
+      reviewFormHTML = `
+        <div class="review-form" data-appointment-id="${app.id}">
+          <label>Rate this service:</label>
+          <div class="stars">
+            ${[1, 2, 3, 4, 5].map(star => `
+              <span class="star" data-value="${star}">&#9733;</span>
+            `).join('')}
+          </div>
+          <textarea placeholder="Leave a comment..." class="review-comment"></textarea>
+          <button onclick="submitReview(${app.id}, this)">Submit Review</button>
+        </div>
+      `;
+    }
+
+    li.innerHTML = `
+      <div class="appointment-card">
+        <strong>Request #${app.id}</strong> - ${app.status}<br>
+        Model: ${app.model}<br>
+        Time: ${app.preferred_time}<br>
+        Problem: ${app.description || 'N/A'}<br>
+        Cancel Reason: ${app.cancel_reason || 'N/A'}<br>
+        Reschedule Time: ${app.reschedule_time || 'N/A'}
+        ${['New', 'Pending'].includes(app.status) ? `<br><button onclick="cancelAppointment(${app.id})">Cancel</button>` : ''}
+        ${rescheduleActions}
+        ${reviewFormHTML}
+      </div>
+    `;
+
+    if (app.status === 'Pending_Rescheduled' && app.reschedule_time) {
+      scheduleRescheduleNotifications(app.reschedule_time, app.id);
+    }
+
+    list.appendChild(li);
+  });
+
+  setupStarRating();
+}
+
+function cancelAppointment(id) {
+  if (!confirm('Are you sure you want to cancel this appointment?')) return;
+
+  fetch(`/appointments/${id}/cancel`, {
+    method: 'POST',
+    credentials: 'include'
+  })
+  .then(res => {
+    if (!res.ok) throw new Error('Cancel failed');
+    return res.json();
+  })
+  .then(() => {
+    alert('Appointment cancelled.');
+    fetchAppointments();
+  })
+  .catch(() => alert('Failed to cancel.'));
+}
+
+</script>
+
+</body>
+</html>

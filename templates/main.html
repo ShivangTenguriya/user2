@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nearby Service Providers</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background: #f5f7fa;
+      color: #333;
+    }
+
+    header {
+      background-color: #007bff;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    header button {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0;
+      margin: 0;
+      transition: color 0.3s ease;
+    }
+
+    header button:hover {
+      color: #dbe9ff;
+    }
+
+    header h1 {
+      margin: 0;
+      font-weight: 600;
+      font-size: 1.5rem;
+      flex-grow: 1;
+      text-align: center;
+    }
+
+    main {
+      padding: 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .provider-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .provider-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.07);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+
+    .provider-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+    }
+
+    .provider-image {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .provider-content {
+      padding: 1rem 1.5rem;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .provider-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      color: #007bff;
+    }
+
+    .provider-skills {
+      font-size: 0.95rem;
+      color: #555;
+      margin-bottom: 0.5rem;
+    }
+
+    .rating {
+      color: #f5b301;
+      margin-bottom: 0.7rem;
+    }
+
+    .location {
+      font-size: 0.9rem;
+      color: #888;
+      margin-bottom: 0.3rem;
+    }
+
+    .btn-book {
+      align-self: flex-start;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 0.5rem 1.3rem;
+      font-size: 1rem;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      text-decoration: none;
+      text-align: center;
+      display: inline-block;
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+    }
+    
+    .btn-book:hover {
+      background-color: #0056b3;
+    }
+
+    .rating .star {
+  font-size: 1.3rem;
+  color: #ffcc00;
+  margin-right: 2px;
+}
+
+
+    .star {
+      font-size: 1.1rem;
+      margin-right: 2px;
+    }
+
+    @media(max-width: 480px) {
+      header h1 {
+        font-size: 1.2rem;
+      }
+      main {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <button onclick="window.history.back();" aria-label="Go back">&larr;</button>
+  <div class="navbar-left">
+      <img src="{{ url_for('static', filename='C.png') }}" alt="Company Logo"
+     style="height: 40px; width: 40px; margin-right: 0.8rem; border-radius: 6px;" />
+      <span class="company-name">Care n Trust</span>
+    </div>
+  <h1>Service Providers Near You</h1>
+  <a href="{{ url_for('landing_profile') }}" class="btn-book">View Profile</a>
+   <a href="{{ url_for('logout') }}" class="btn-book">Logout</a>
+</header>
+
+<main>
+  <div class="provider-list">
+    {% for provider in providers %}
+      <div class="provider-card">
+       
+        
+        <div class="provider-content">
+          <div>
+            <div class="provider-name">{{ provider.name }}</div>
+            <div class="provider-skills">{{ provider.skills }}</div>
+            <div class="location">📍 {{ provider.address }}</div>
+            <!-- <div class="location">📞 {{ provider.phone_number }}</div> -->
+          </div>
+
+          <!-- Optional: Dummy rating -->
+          <div class="rating" id="provider-rating-{{ provider.id }}"></div>
+          <a href="{{ url_for('provider_profile', provider_id=provider.id, gadget = gadget) }}" class="btn-book">View Profile</a>
+
+          <a href="#" class="btn-book">Book Now</a>
+        </div>
+      </div>
+    {% else %}
+      <p>No service providers found.</p>
+    {% endfor %}
+  </div>
+</main>
+<script>
+  // Function to render stars inside a container element based on average rating
+  function renderStars(container, avg) {
+    container.innerHTML = ''; // Clear previous content
+
+    if (avg === null || avg === undefined || avg === 0) {
+      container.textContent = 'No ratings yet';
+      return;
+    }
+
+    const fullStars = Math.floor(avg);
+    const halfStar = avg - fullStars >= 0.5;
+    const totalStars = 5;
+
+    // Add full stars
+    for (let i = 0; i < fullStars; i++) {
+      container.innerHTML += '<span class="star">&#9733;</span>'; // filled star
+    }
+
+    // Add half star (optional)
+    if (halfStar) {
+      container.innerHTML += '<span class="star">&#x272E;</span>'; // half-star or styled star
+    }
+
+    // Add remaining empty stars
+    const emptyStars = totalStars - fullStars - (halfStar ? 1 : 0);
+    for (let i = 0; i < emptyStars; i++) {
+      container.innerHTML += '<span class="star">&#9734;</span>'; // empty star
+    }
+
+    // Show numeric rating next to stars
+    container.innerHTML += ` <span style="margin-left: 8px; font-weight: bold;">(${avg.toFixed(1)})</span>`;
+  }
+
+  // Fetch average rating for a single provider and render stars
+  function loadProviderRating(providerId) {
+    const container = document.getElementById(`provider-rating-${providerId}`);
+    if (!container) {
+      console.warn(`Rating container for provider ${providerId} not found.`);
+      return;
+    }
+
+    fetch(`/provider/${providerId}/average_rating`)
+      .then(res => {
+        if (!res.ok) throw new Error('Network response was not ok');
+        return res.json();
+      })
+      .then(data => {
+        console.log(`Rating data for provider ${providerId}:`, data);
+        const avg = data.average_rating;
+        renderStars(container, avg);
+      })
+      .catch(err => {
+        console.error(`Failed to load rating for provider ${providerId}:`, err);
+        container.textContent = 'Rating unavailable';
+      });
+  }
+
+  // Loop through all provider rating containers and load ratings
+  function loadAllProviderRatings() {
+    const ratingContainers = document.querySelectorAll('[id^="provider-rating-"]');
+    ratingContainers.forEach(container => {
+      const providerId = container.id.split('provider-rating-')[1];
+      if (providerId) {
+        loadProviderRating(providerId);
+      }
+    });
+  }
+
+  // On page load, load all provider ratings
+  document.addEventListener('DOMContentLoaded', () => {
+    loadAllProviderRatings();
+  });
+</script>
+
+
+</body>
+</html>

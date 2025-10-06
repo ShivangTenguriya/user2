@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #e6f2ff, #ffffff);
+      margin: 0;
+      padding-top: 70px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* Navbar */
+    .navbar {
+      width: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: #007bff;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.7rem 1.5rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo {
+      height: 40px;
+      width: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .company-name {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: white;
+    }
+
+    .navbar-right .support-link {
+      font-size: 0.9rem;
+      color: #e6f2ff;
+      cursor: pointer;
+    }
+
+    /* Sign Up Container */
+    .signup-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      color: #0052cc;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      font-weight: 600;
+      color: #333;
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+
+    input[type="email"],
+    input[type="text"] {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border: 1.5px solid #ccc;
+      border-radius: 10px;
+      font-size: 1rem;
+      margin-bottom: 1.2rem;
+    }
+
+    input:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      background: #007bff;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: bold;
+      padding: 0.9rem;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .support-text {
+      font-size: 0.8rem;
+      text-align: center;
+      color: #888;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="navbar-left">
+      <img src="{{ url_for('static', filename='C.png') }}" alt="Company Logo" class="logo" />
+      <span class="company-name">Care n Trust</span>
+    </div>
+    <div class="navbar-right">
+      <span class="support-link">Support</span>
+    </div>
+  </header>
+
+  <!-- Sign-Up Form -->
+  <div class="signup-container">
+    <h2><i class="fas fa-user-plus"></i> Sign Up</h2>
+    <form method="POST">
+      <input type="hidden" name="gadget" value="{{ request.args.get('gadget', '') }}">
+      <label for="email">Email</label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        value="{{ email or '' }}"
+        placeholder="Enter your email"
+        required
+      />
+
+      <label for="mobile_number">Mobile Number</label>
+      <input
+        type="text"
+        id="mobile_number"
+        name="mobile_number"
+        placeholder="Enter mobile number"
+        required
+      />
+
+      <button type="submit">Sign Up</button>
+    
+    </form>
+
+    <p class="support-text">Need help? Call 1800-123-4567 (Toll-Free)</p>
+  </div>
+
+</body>
+</html>

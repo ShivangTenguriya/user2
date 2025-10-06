@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login via OTP</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    /* Global Reset & Box Sizing */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #e6f2ff, #ffffff);
+      margin: 0;
+      padding-top: 70px; /* Prevent content from hiding behind navbar */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* Navbar */
+    .navbar {
+      width: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: #007bff;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.7rem 1.5rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo {
+      height: 40px;
+      width: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .company-name {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: white;
+    }
+
+    .navbar-right .support-link {
+      font-size: 0.9rem;
+      color: #e6f2ff;
+      cursor: pointer;
+    }
+
+    /* Login Container */
+    .login-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h1 {
+      color: #0052cc;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .sub-heading {
+      color: #333;
+      font-size: 0.95rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.3rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .icon-input {
+      position: relative;
+      width: 100%;
+    }
+
+    .icon-input i {
+      position: absolute;
+      top: 50%;
+      left: 12px;
+      transform: translateY(-50%);
+      color: #aaa;
+    }
+
+    .icon-input input {
+      width: 100%;
+      padding: 0.7rem 1rem 0.7rem 36px;
+      border: 1.5px solid #ccc;
+      border-radius: 10px;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    input:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      background: #007bff;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: bold;
+      padding: 0.9rem;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .info-text,
+    .error-message {
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .info-text {
+      color: #444;
+    }
+
+    .error-message {
+      color: #e60000;
+      font-weight: 600;
+      display: none;
+    }
+
+    #otpSection {
+      display: none;
+      margin-top: 1rem;
+    }
+
+    .lang-switch {
+      text-align: right;
+      font-size: 0.8rem;
+      margin-top: -10px;
+      margin-bottom: 15px;
+      cursor: pointer;
+      color: #555;
+    }
+
+    .support-text {
+      font-size: 0.8rem;
+      text-align: center;
+      color: #888;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="navbar-left">
+      <img src="{{ url_for('static', filename='C.png') }}" alt="Company Logo" class="logo" />
+      <span class="company-name">Care n Trust</span>
+    </div>
+    <div class="navbar-right">
+      <span class="support-link">Support</span>
+    </div>
+  </header>
+
+  <!-- Login Form -->
+  <div class="login-container">
+    <h1><i class="fas fa-user-lock"></i> Login</h1>
+    <p class="sub-heading">Login using OTP sent to your email</p>
+
+    <div class="lang-switch" onclick="toggleLanguage()">हिन्दी / English</div>
+
+    <div id="errorMessage" class="error-message"></div>
+
+    <form id="emailLoginForm">
+      <!-- Step 1 -->
+      <div id="emailSection">
+        <label for="emailInput">Email ID</label>
+        <div class="icon-input">
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="emailInput" placeholder="Enter your email" required />
+        </div>
+        <button type="button" id="checkEmailBtn">Send OTP</button>
+      </div>
+
+      <!-- Step 2 -->
+      <div id="otpSection">
+        <label for="otpInput">Enter OTP</label>
+        <div class="icon-input">
+          <i class="fas fa-key"></i>
+          <input type="text" id="otpInput" maxlength="6" placeholder="6-digit OTP" required />
+        </div>
+        <button type="submit">Verify & Login</button>
+      </div>
+    </form>
+
+    <p class="support-text">Need help? Call 1800-123-4567 (Toll-Free)</p>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    const checkEmailBtn = document.getElementById('checkEmailBtn');
+    const emailInput = document.getElementById('emailInput');
+    const otpSection = document.getElementById('otpSection');
+    const errorMessage = document.getElementById('errorMessage');
+    const emailLoginForm = document.getElementById('emailLoginForm');
+
+    let currentEmail = null;
+
+    checkEmailBtn.addEventListener('click', async () => {
+      const email = emailInput.value.trim();
+      if (!email) {
+        showError('Please enter your email.');
+        return;
+      }
+      clearError();
+
+      try {
+        const res = await fetch('/check_email2', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+
+        if (data.exists) {
+          currentEmail = email;
+          showOtpSection();
+        } else {
+          showError('Email not registered. Please sign up first.');
+        }
+      } catch (err) {
+        showError('Something went wrong. Please try again.');
+      }
+    });
+
+    emailLoginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!currentEmail) {
+        showError('Please verify your email first.');
+        return;
+      }
+
+      const otp = document.getElementById('otpInput').value.trim();
+
+      if (!otp || otp.length !== 6) {
+        showError('Enter a valid 6-digit OTP.');
+        return;
+      }
+
+      clearError();
+      const urlParams = new URLSearchParams(window.location.search);
+      const gadget = urlParams.get('gadget') || '';
+
+      try {
+        const res = await fetch('/verify_otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ email: currentEmail, otp })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          alert('Login successful!');
+          window.location.href = `/providers?gadget=${encodeURIComponent(gadget)}`;
+        } else {
+          showError('Incorrect OTP. Try again.');
+        }
+      } catch (err) {
+        showError('OTP verification failed.');
+      }
+    });
+
+    function showOtpSection() {
+      otpSection.style.display = 'block';
+      emailInput.disabled = true;
+      checkEmailBtn.disabled = true;
+    }
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorMessage.style.display = 'block';
+    }
+
+    function clearError() {
+      errorMessage.textContent = '';
+      errorMessage.style.display = 'none';
+    }
+
+    function toggleLanguage() {
+      alert("Hindi version coming soon!");
+    }
+  </script>
+
+</body>
+</html>
