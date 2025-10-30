@@ -462,6 +462,7 @@ function cancelReschedule(id) {
 function insertAppointments(listId, appointments) {
   const list = document.getElementById(listId);
   list.innerHTML = '';
+
   if (!appointments.length) {
     list.innerHTML = '<li>No request found.</li>';
     return;
@@ -471,6 +472,7 @@ function insertAppointments(listId, appointments) {
     const li = document.createElement('li');
     let reviewFormHTML = '';
     let rescheduleActions = '';
+    console.log(`Appointment ID: ${app.id}, Status: ${app.status}, Payment Status: ${app.payment_status}`);
 
     // Add Accept/Cancel buttons for Rescheduled
     if (app.status === 'Rescheduled') {
@@ -497,6 +499,12 @@ function insertAppointments(listId, appointments) {
       `;
     }
 
+    // Download Invoice button (only for Completed + paid)
+    let downloadButtonHTML = '';
+    if (app.status === 'Completed' && app.payment_status) {
+      downloadButtonHTML = `<br><button onclick="downloadInvoice(${app.id})">Download Invoice</button>`;
+    }
+
     li.innerHTML = `
       <div class="appointment-card">
         <strong>Request #${app.id}</strong> - ${app.status}<br>
@@ -505,9 +513,11 @@ function insertAppointments(listId, appointments) {
         Problem: ${app.description || 'N/A'}<br>
         Cancel Reason: ${app.cancel_reason || 'N/A'}<br>
         Reschedule Time: ${app.reschedule_time || 'N/A'}
-        ${['New', 'Pending'].includes(app.status) ? `<br><button onclick="cancelAppointment(${app.id})">Cancel</button>` : ''}
+        ${['New', 'Pending'].includes(app.status)
+          ? `<br><button onclick="cancelAppointment(${app.id})">Cancel</button>` : ''}
         ${rescheduleActions}
         ${reviewFormHTML}
+        ${downloadButtonHTML}
       </div>
     `;
 
@@ -518,7 +528,13 @@ function insertAppointments(listId, appointments) {
     list.appendChild(li);
   });
 
+  // Setup star rating (existing function)
   setupStarRating();
+}
+
+// Download invoice function
+function downloadInvoice(appointmentId) {
+  window.open(`/download_bill/${appointmentId}`, '_blank'); // opens PDF in a new tab
 }
 
 function cancelAppointment(id) {

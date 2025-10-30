@@ -1,12 +1,14 @@
 import random, os
 import smtplib
 import cloudinary
+from xhtml2pdf import pisa
+from io import BytesIO
 from dotenv import load_dotenv
 from decimal import Decimal
 from datetime import datetime
 from sqlalchemy import func
 from email.mime.text import MIMEText
-from flask import Flask, request, render_template, abort, redirect, flash, url_for, send_from_directory, jsonify, session
+from flask import Flask, request, render_template, abort, redirect, flash, url_for, make_response, jsonify, session
 from flask_login import current_user, login_required, LoginManager, login_user, logout_user
 from models import db, ServiceProvider,Appointment,GadgetType, User
 
@@ -31,6 +33,12 @@ db.init_app(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 # login_manager.login_view = 'login'
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    if request.path.startswith('/user/') or request.is_json or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return jsonify({'error': 'Unauthorized'}), 401
+    return redirect(url_for('login', next=request.url))
 
 def send_verification_email(to_email, code):
     smtp_server = "smtp.gmail.com"
@@ -68,8 +76,8 @@ def landing_profile():
 @app.route('/logout')
 @login_required
 def logout():
-    logout_user()  # Flask-Login logout
-    session.clear()  # Clear any session data (optional but good practice)
+    logout_user()  
+    session.clear()  
     flash('You have been logged out.', 'info')
     return redirect(url_for('landing'))
 
@@ -83,7 +91,7 @@ def check_email2():
         otp = str(random.randint(100000, 999999))
         session['otp'] = otp
         session['otp_email'] = email
-        send_verification_email(email, otp)  # your existing function
+        send_verification_email(email, otp)  
         return jsonify({'exists': True})
 
     return jsonify({'exists': False})
@@ -139,12 +147,6 @@ def login_form():
     return render_template('user_login.html')
 
 
-@login_manager.unauthorized_handler
-def unauthorized():
-    if request.path.startswith('/user/') or request.is_json or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        return jsonify({'error': 'Unauthorized'}), 401
-    return redirect(url_for('login', next=request.url))
-
 
 @app.route('/providers1')
 @login_required
@@ -184,9 +186,6 @@ def signup():
         return redirect(url_for('provider_profile'))
 
     return render_template('signup.html', email=email_prefill)
-
-
-
 
 
 
@@ -278,7 +277,7 @@ def user_appointments():
     appointments = Appointment.query.filter_by(user_id=current_user.id).all()
     grouped = {
         "New": [],
-        "Pending": [],           # Will hold both 'Pending' and 'Pending_Rescheduled'
+        "Pending": [],           
         "Completed": [],
         "Cancelled": [],
         "Rescheduled": []
@@ -297,6 +296,7 @@ def user_appointments():
 
         if a.status == 'Completed':
             item['has_reviewed'] = bool(a.rating or a.comment)
+            item["payment_status"]= bool(a.payment_status)
 
         if a.status in ['Pending', 'Pending_Rescheduled']:
             grouped['Pending'].append(item)
@@ -364,26 +364,21 @@ def get_average_rating(provider_id):
 @login_required
 def profile():
     if request.method == 'POST':
-        # Get form data
         full_name = request.form.get('full_name', '').strip()
         email = request.form.get('email', '').strip().lower()
         phone = request.form.get('phone', '').strip()
-
-        # Basic validation (you can improve this)
         if not full_name or not email or not phone:
             flash('All fields are required.', 'danger')
             return redirect(url_for('profile'))
 
-        # Update user fields
-        current_user.username = email  # or have separate 'name' field for full name
+        
+        current_user.username = email  
         current_user.mobile_number = phone
-        # If you want to store full_name separately, add that field in model and update it here
 
         db.session.commit()
         flash('Profile updated successfully!', 'success')
         return redirect(url_for('profile'))
 
-    # GET request — render form with current user info
     return render_template('profile.html', user=current_user)
 
 
@@ -404,6 +399,7 @@ def cancel_appointment(appointment_id):
     db.session.commit()
 
     return jsonify({'message': 'Appointment cancelled'})
+
 
 @app.route('/appointments/<int:appointment_id>/cancel_reschedule', methods=['POST'])
 @login_required
@@ -426,7 +422,6 @@ def cancel_reschedule(appointment_id):
 @app.route('/appointments/<int:appointment_id>/accept_reschedule', methods=['POST'])
 @login_required
 def accept_reschedule(appointment_id):
-    # Step 1: Fetch the appointment for the current user
     appointment = Appointment.query.filter_by(id=appointment_id, user_id=current_user.id).first()
 
     if not appointment:
@@ -438,12 +433,28 @@ def accept_reschedule(appointment_id):
     if not appointment.reschedule_time:
         return jsonify({'error': 'Reschedule time is not set'}), 400
 
-    # Step 2: Update the status to 'Pending'
     appointment.status = 'Pending_Rescheduled'
     db.session.commit()
 
     return jsonify({'message': 'Rescheduled appointment accepted and moved to pending'})
 
+
+@app.route('/download_bill/<int:appointment_id>')
+@login_required
+def download_bill(appointment_id):
+    appointment = Appointment.query.get_or_404(appointment_id)
+
+    if appointment.user_id != current_user.id or appointment.status != 'Completed' or not appointment.payment_status:
+        return "Bill not available.", 403
+
+    html = render_template('bill.html', appointment=appointment)
+    pdf_buffer = BytesIO()
+    pisa.CreatePDF(html, dest=pdf_buffer)
+
+    response = make_response(pdf_buffer.getvalue())
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = f'attachment; filename=bill_{appointment.id}.pdf'
+    return response
 
 if __name__ == '__main__':
     app.run()

@@ -96,6 +96,12 @@ class Appointment(db.Model):
     rating = db.Column(db.Integer, nullable=True)
     comment = db.Column(db.Text, nullable=True)
 
+    amount = db.Column(db.Integer, nullable = True)
+    order_id = db.Column(db.String(100), nullable=False)
+    payment_id = db.Column(db.String(100), nullable=True)
+    payment_status = db.Column(db.Boolean, default = False)
+
+
 
 class ProviderProfileWork(db.Model):
     __tablename__ = 'provider_profile_work'

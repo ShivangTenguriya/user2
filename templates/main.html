@@ -182,10 +182,8 @@
             <div class="provider-name">{{ provider.name }}</div>
             <div class="provider-skills">{{ provider.skills }}</div>
             <div class="location">📍 {{ provider.address }}</div>
-            <!-- <div class="location">📞 {{ provider.phone_number }}</div> -->
           </div>
 
-          <!-- Optional: Dummy rating -->
           <div class="rating" id="provider-rating-{{ provider.id }}"></div>
           <a href="{{ url_for('provider_profile', provider_id=provider.id, gadget = gadget) }}" class="btn-book">View Profile</a>
 
@@ -198,7 +196,6 @@
   </div>
 </main>
 <script>
-  // Function to render stars inside a container element based on average rating
   function renderStars(container, avg) {
     container.innerHTML = ''; // Clear previous content
 
@@ -211,27 +208,22 @@
     const halfStar = avg - fullStars >= 0.5;
     const totalStars = 5;
 
-    // Add full stars
     for (let i = 0; i < fullStars; i++) {
-      container.innerHTML += '<span class="star">&#9733;</span>'; // filled star
+      container.innerHTML += '<span class="star">&#9733;</span>'; 
     }
 
-    // Add half star (optional)
     if (halfStar) {
-      container.innerHTML += '<span class="star">&#x272E;</span>'; // half-star or styled star
+      container.innerHTML += '<span class="star">&#x272E;</span>'; 
     }
 
-    // Add remaining empty stars
     const emptyStars = totalStars - fullStars - (halfStar ? 1 : 0);
     for (let i = 0; i < emptyStars; i++) {
       container.innerHTML += '<span class="star">&#9734;</span>'; // empty star
     }
 
-    // Show numeric rating next to stars
     container.innerHTML += ` <span style="margin-left: 8px; font-weight: bold;">(${avg.toFixed(1)})</span>`;
   }
 
-  // Fetch average rating for a single provider and render stars
   function loadProviderRating(providerId) {
     const container = document.getElementById(`provider-rating-${providerId}`);
     if (!container) {
@@ -255,7 +247,6 @@
       });
   }
 
-  // Loop through all provider rating containers and load ratings
   function loadAllProviderRatings() {
     const ratingContainers = document.querySelectorAll('[id^="provider-rating-"]');
     ratingContainers.forEach(container => {
@@ -266,7 +257,6 @@
     });
   }
 
-  // On page load, load all provider ratings
   document.addEventListener('DOMContentLoaded', () => {
     loadAllProviderRatings();
   });

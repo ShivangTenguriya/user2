@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice - Request #{{ appointment.id }}</title>
+  <style>
+    body {
+      font-family: 'Helvetica', Arial, sans-serif;
+      margin: 20px;
+      color: #000;
+      line-height: 1.2;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 26px;
+      letter-spacing: 1px;
+    }
+
+    .header h3 {
+      margin: 2px 0 0 0;
+      font-weight: normal;
+      font-size: 12px;
+    }
+
+    .section {
+      margin-bottom: 15px;
+    }
+
+    .section-title {
+      font-weight: bold;
+      font-size: 14px;
+      border-bottom: 1px solid #000;
+      padding-bottom: 3px;
+      margin-bottom: 5px;
+    }
+
+    .details div {
+      margin: 2px 0;
+      font-size: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 5px;
+      font-size: 12px;
+    }
+
+    th, td {
+      border: 1px solid #000;
+      padding: 6px;
+      text-align: left;
+    }
+
+    th {
+      font-weight: bold;
+    }
+
+    .total {
+      text-align: right;
+      font-weight: bold;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 10px;
+      margin-top: 20px;
+      line-height: 1.2;
+    }
+
+    .legal {
+      text-align: center;
+      font-size: 9px;
+      margin-top: 10px;
+      color: #555;
+      line-height: 1.1;
+    }
+
+    body::before {
+      content: "INVOICE";
+      position: fixed;
+      top: 40%;
+      left: 20%;
+      font-size: 60px;
+      color: rgba(0,0,0,0.03);
+      transform: rotate(-30deg);
+      z-index: -1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Care N Trust</h1>
+    <h3>Services Invoice</h3>
+  </div>
+
+  <div class="section details">
+    <div class="section-title">Invoice Details</div>
+    <div><strong>Invoice #: </strong>{{ appointment.id }}</div>
+    <div><strong>Date: </strong>{{ appointment.created_at.strftime('%d-%m-%Y') }}</div>
+    <div><strong>Customer: </strong>{{ appointment.user.username }}</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Service Details</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Model</th>
+          <th>Purchase Date</th>
+          <th>Service Provider</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ appointment.problem_description }}</td>
+          <td>{{ appointment.model }}</td>
+          <td>{{ appointment.purchase_date.strftime('%d-%m-%Y') }}</td>
+          <td>{{ appointment.provider.name}}</td>
+          <td>{{ appointment.amount }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="total">Total: {{ appointment.amount }}</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Payment Information</div>
+    <div><strong>Payment ID: </strong>{{ appointment.payment_id or "N/A" }}</div>
+    <div><strong>Payment Status: </strong>{{ "Paid" if appointment.payment_status else "Pending" }}</div>
+  </div>
+
+  <div class="footer">
+    Thank you for your business! This is a system-generated invoice. Please keep it for your records.
+  </div>
+
+  <div class="legal">
+    <strong>Disclaimer:</strong> This invoice is computer-generated and may contain errors. It is for informational purposes only and is <u>not suitable for legal or official use</u>.
+  </div>
+
+</body>
+</html>

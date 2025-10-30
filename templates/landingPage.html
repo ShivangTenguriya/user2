@@ -198,7 +198,7 @@
     let userLatitude = null;
     let userLongitude = null;
 
-    // Enable Next button only if gadget is selected
+    
     gadgetSelect.addEventListener('change', () => {
       nextButton.disabled = !gadgetSelect.value;
     });
@@ -210,7 +210,6 @@
       locationStatus.textContent = "Location fetched successfully!";
       spinner.style.display = 'none';
 
-      // Show form now
       landingForm.style.display = 'block';
     }
 
@@ -235,7 +234,6 @@
       }
     }
 
-    // Request user location on page load
     window.onload = () => {
       if (!navigator.geolocation) {
         locationStatus.textContent = "Geolocation is not supported by your browser.";
@@ -245,7 +243,6 @@
       }
     };
 
-    // Handle form submission
     landingForm.addEventListener('submit', (e) => {
       e.preventDefault();
 
