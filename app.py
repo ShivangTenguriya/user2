@@ -109,7 +109,6 @@ def check_email2():
 
     if user:
         otp = str(random.randint(100000, 999999))
-        print(otp)
         session['otp'] = otp
         session['otp_email'] = email
         send_verification_email(email, otp)  
