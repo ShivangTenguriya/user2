@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <style>
-    /* Global Reset & Box Sizing */
+    
     * {
       box-sizing: border-box;
     }
@@ -16,7 +16,7 @@
       font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(to bottom, #e6f2ff, #ffffff);
       margin: 0;
-      padding-top: 70px; /* Prevent content from hiding behind navbar */
+      padding-top: 70px; 
       display: flex;
       justify-content: center;
       align-items: center;
@@ -218,6 +218,7 @@
         <button type="submit">Verify & Login</button>
       </div>
     </form>
+    
 
     <p class="support-text">Need help? Call 1800-123-4567 (Toll-Free)</p>
   </div>
@@ -237,6 +238,9 @@
         return;
       }
       clearError();
+      const urlParams = new URLSearchParams(window.location.search);
+      const gadget = urlParams.get('gadget') || '';
+      console.log(urlParams)
 
       try {
         const res = await fetch('/check_email2', {
@@ -251,7 +255,9 @@
           showOtpSection();
         } else {
           showError('Email not registered. Please sign up first.');
+          window.location.href = `/signup?gadget=${encodeURIComponent(gadget)}`;
         }
+
       } catch (err) {
         showError('Something went wrong. Please try again.');
       }

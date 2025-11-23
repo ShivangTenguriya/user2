@@ -2,136 +2,176 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta-name="viewport" content="width=device-width, initial-scale=1" />
   <title>Sign Up</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <style>
+    :root {
+      --primary: #007bff;
+      --primary-dark: #0057c4;
+      --bg-light: #f0f7ff;
+      --card-radius: 18px;
+      --font: 'Segoe UI', sans-serif;
+    }
+
     * {
       box-sizing: border-box;
+      padding: 0;
+      margin: 0;
     }
 
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to bottom, #e6f2ff, #ffffff);
-      margin: 0;
-      padding-top: 70px;
+      font-family: var(--font);
+      background: linear-gradient(135deg, #e7f1ff, #ffffff 40%);
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
+      padding-top: 80px;
     }
 
-    /* Navbar */
+    
     .navbar {
       width: 100%;
       position: fixed;
       top: 0;
       left: 0;
-      background: #007bff;
+      background: var(--primary);
       color: white;
+      padding: 0.8rem 1.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.7rem 1.5rem;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
       z-index: 1000;
     }
 
     .navbar-left {
       display: flex;
       align-items: center;
+      gap: 12px;
     }
 
     .logo {
-      height: 40px;
-      width: 40px;
+      width: 45px;
+      height: 45px;
       border-radius: 50%;
-      margin-right: 10px;
+      border: 2px solid white;
+      object-fit: cover;
     }
 
     .company-name {
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: white;
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
     }
 
-    .navbar-right .support-link {
+    .support-link {
+      color: #eaf4ff;
       font-size: 0.9rem;
-      color: #e6f2ff;
       cursor: pointer;
+      transition: 0.2s;
     }
 
-    /* Sign Up Container */
+    .support-link:hover {
+      color: #ffffff;
+    }
+
     .signup-container {
       background: white;
-      padding: 2rem;
-      border-radius: 15px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      padding: 2.3rem 2rem;
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
+      border-radius: var(--card-radius);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+      animation: fadeIn 0.6s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     h2 {
-      color: #0052cc;
       text-align: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.8rem;
+      color: var(--primary-dark);
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    h2 i {
+      margin-right: 8px;
+      color: var(--primary);
     }
 
     label {
       font-weight: 600;
       color: #333;
+      font-size: 0.95rem;
+      margin-bottom: 6px;
       display: block;
-      margin-bottom: 0.4rem;
     }
 
     input[type="email"],
     input[type="text"] {
       width: 100%;
-      padding: 0.7rem 1rem;
-      border: 1.5px solid #ccc;
-      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      border: 1.6px solid #cdd7e3;
+      border-radius: 12px;
       font-size: 1rem;
-      margin-bottom: 1.2rem;
+      background: #f9fbff;
+      transition: 0.25s border ease, 0.25s box-shadow ease;
+      margin-bottom: 1.3rem;
     }
 
     input:focus {
-      border-color: #007bff;
+      border-color: var(--primary);
+      box-shadow: 0 0 6px rgba(0, 123, 255, 0.25);
+      background: white;
       outline: none;
     }
 
+   
     button {
       width: 100%;
-      background: #007bff;
-      color: #fff;
-      font-size: 1rem;
-      font-weight: bold;
-      padding: 0.9rem;
+      background: var(--primary);
       border: none;
+      color: white;
+      padding: 0.9rem;
       border-radius: 30px;
+      font-size: 1.05rem;
+      font-weight: 600;
       cursor: pointer;
-      transition: background 0.3s ease;
+      letter-spacing: 0.5px;
+      transition: 0.25s ease-in-out;
     }
 
     button:hover {
-      background: #0056b3;
+      background: var(--primary-dark);
+      transform: scale(1.03);
     }
 
+    
     .support-text {
-      font-size: 0.8rem;
       text-align: center;
-      color: #888;
-      margin-top: 1rem;
+      margin-top: 1.3rem;
+      font-size: 0.85rem;
+      color: #7b7b7b;
     }
+
   </style>
 </head>
 
 <body>
 
-  <!-- Navbar -->
+  <!-- NAVBAR -->
   <header class="navbar">
     <div class="navbar-left">
-      <img src="{{ url_for('static', filename='C.png') }}" alt="Company Logo" class="logo" />
+      <img src="{{ url_for('static', filename='C.png') }}" class="logo" alt="Company Logo" />
       <span class="company-name">Care n Trust</span>
     </div>
     <div class="navbar-right">
@@ -139,11 +179,13 @@
     </div>
   </header>
 
-  <!-- Sign-Up Form -->
+  <!-- SIGN-UP CARD -->
   <div class="signup-container">
-    <h2><i class="fas fa-user-plus"></i> Sign Up</h2>
+    <h2><i class="fas fa-user-plus"></i>Sign Up</h2>
+
     <form method="POST">
       <input type="hidden" name="gadget" value="{{ request.args.get('gadget', '') }}">
+
       <label for="email">Email</label>
       <input
         type="email"
@@ -164,10 +206,9 @@
       />
 
       <button type="submit">Sign Up</button>
-    
     </form>
 
-    <p class="support-text">Need help? Call 1800-123-4567 (Toll-Free)</p>
+    <p class="support-text">Need help? Call +91 8958110996 </p>
   </div>
 
 </body>

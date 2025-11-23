@@ -197,8 +197,7 @@
 </main>
 <script>
   function renderStars(container, avg) {
-    container.innerHTML = ''; // Clear previous content
-
+    container.innerHTML = ''; 
     if (avg === null || avg === undefined || avg === 0) {
       container.textContent = 'No ratings yet';
       return;
@@ -218,7 +217,7 @@
 
     const emptyStars = totalStars - fullStars - (halfStar ? 1 : 0);
     for (let i = 0; i < emptyStars; i++) {
-      container.innerHTML += '<span class="star">&#9734;</span>'; // empty star
+      container.innerHTML += '<span class="star">&#9734;</span>';
     }
 
     container.innerHTML += ` <span style="margin-left: 8px; font-weight: bold;">(${avg.toFixed(1)})</span>`;

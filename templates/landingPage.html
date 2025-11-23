@@ -7,146 +7,184 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
     * {
-      box-sizing: border-box;
-    }
+  box-sizing: border-box;
+}
 
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f5f7fa;
-      margin: 0;
-      padding-top: 70px; /* Space for navbar */
-      display: flex;
-      height: 100vh;
-      justify-content: center;
-      align-items: center;
-      padding: 1rem;
-    }
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f5f7fa;
+  margin: 0;
+  padding-top: 70px; /* Space for navbar */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1rem;
+  color: #333;
+}
 
-    /* Navbar */
-    .navbar {
-      width: 100%;
-      position: fixed;
-      top: 0;
-      left: 0;
-      background: #007bff;
-      color: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.7rem 1.5rem;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      z-index: 1000;
-    }
+.navbar {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #007bff;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.7rem 1.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
 
-    .navbar-left {
-      display: flex;
-      align-items: center;
-    }
+.navbar-left {
+  display: flex;
+  align-items: center;
+}
 
-    .logo {
-      height: 40px;
-      width: 40px;
-      border-radius: 50%;
-      margin-right: 10px;
-    }
+.logo {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
 
-    .company-name {
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: white;
-    }
+.company-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
+}
 
-    .navbar-right .support-link {
-      font-size: 0.9rem;
-      color: #e6f2ff;
-      cursor: pointer;
-    }
+.navbar-right .support-link {
+  font-size: 0.9rem;
+  color: #e6f2ff;
+  cursor: pointer;
+  transition: color 0.2s;
+}
 
-    /* Container */
-    .container {
-      background: white;
-      padding: 2rem 2.5rem;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      max-width: 400px;
-      width: 100%;
-      text-align: center;
-    }
+.navbar-right .support-link:hover {
+  color: #cce5ff;
+}
 
-    h1 {
-      color: #007bff;
-      margin-bottom: 1.5rem;
-      font-weight: 700;
-    }
+.container {
+  background: white;
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
 
-    .info {
-      margin-bottom: 1.5rem;
-      font-size: 1rem;
-      color: #444;
-    }
+.container:hover {
+  transform: translateY(-5px);
+}
 
-    select {
-      width: 100%;
-      padding: 0.7rem 1rem;
-      font-size: 1rem;
-      border: 1.7px solid #ccc;
-      border-radius: 8px;
-      margin-bottom: 1.5rem;
-      font-family: inherit;
-      transition: border-color 0.3s ease;
-      appearance: none;
-      background: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><polygon points="6,9 12,15 18,9" fill="%23777"/></svg>') no-repeat right 1rem center / 1rem auto;
-      cursor: pointer;
-    }
+h1 {
+  color: #007bff;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  font-size: 1.8rem;
+}
 
-    select:focus {
-      border-color: #007bff;
-      outline: none;
-    }
+.info {
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  color: #444;
+}
 
-    button {
-      background-color: #007bff;
-      color: white;
-      font-size: 1.1rem;
-      font-weight: 700;
-      border: none;
-      border-radius: 25px;
-      padding: 0.9rem 2rem;
-      cursor: pointer;
-      width: 100%;
-      transition: background-color 0.3s ease;
-      user-select: none;
-    }
+select {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-family: inherit;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  appearance: none;
+  background: white
+    url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><polygon points="6,9 12,15 18,9" fill="%23777"/></svg>')
+    no-repeat right 1rem center / 1rem auto;
+  cursor: pointer;
+}
 
-    button:disabled {
-      background-color: #a3c1ff;
-      cursor: not-allowed;
-    }
+select:focus {
+  border-color: #0056b3;
+  box-shadow: 0 0 4px rgba(0, 86, 179, 0.4);
+  outline: none;
+}
 
-    button:hover:not(:disabled) {
-      background-color: #0056b3;
-    }
+button {
+  background-color: #007bff;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 25px;
+  padding: 0.9rem 2rem;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s;
+  user-select: none;
+  display: inline-block;
+}
 
-    .loading-spinner {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #007bff;
-      border-radius: 50%;
-      width: 36px;
-      height: 36px;
-      animation: spin 1s linear infinite;
-      margin: 1rem auto 2rem;
-    }
+button:disabled {
+  background-color: #a3c1ff;
+  cursor: not-allowed;
+}
 
-    @keyframes spin {
-      0% { transform: rotate(0deg);}
-      100% { transform: rotate(360deg);}
-    }
+button:hover:not(:disabled) {
+  background-color: #0056b3;
+  box-shadow: 0 4px 12px rgba(0, 86, 179, 0.4);
+  transform: translateY(-2px);
+}
 
-    .error {
-      color: #d9534f;
-      margin-bottom: 1.5rem;
-      font-weight: 600;
-    }
+button:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 0 2px 6px rgba(0, 86, 179, 0.6);
+}
+
+.loading-spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  animation: spin 1s linear infinite;
+  margin: 1rem auto 2rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg);}
+  100% { transform: rotate(360deg);}
+}
+
+.error {
+  color: #d9534f;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+/* Responsive tweaks */
+@media (max-width: 480px) {
+  .container {
+    padding: 1.5rem 1.5rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -250,6 +288,7 @@
 
       const url = `/login?lat=${encodeURIComponent(userLatitude)}&lon=${encodeURIComponent(userLongitude)}&gadget=${encodeURIComponent(gadgetSelect.value)}`;
       window.location.href = url;
+      console.log(url);
     });
   </script>
 

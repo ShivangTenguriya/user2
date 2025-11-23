@@ -1,25 +1,28 @@
-import random, os
+import random, os, string
 import smtplib
 import cloudinary
 from xhtml2pdf import pisa
 from io import BytesIO
 from dotenv import load_dotenv
 from decimal import Decimal
-from datetime import datetime
+from datetime import datetime, timedelta
 from sqlalchemy import func
 from email.mime.text import MIMEText
+from flask_socketio import SocketIO, join_room
 from flask import Flask, request, render_template, abort, redirect, flash, url_for, make_response, jsonify, session
 from flask_login import current_user, login_required, LoginManager, login_user, logout_user
-from models import db, ServiceProvider,Appointment,GadgetType, User
+from models import db, ServiceProvider,Appointment,GadgetType, User, Coupon 
 
 
 app = Flask(__name__)
 load_dotenv()
 app.secret_key = os.getenv('secret_key')
+
 app.config['SQLALCHEMY_DATABASE_URI'] =  os.getenv('url_db')
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = r'C:\Users\Pc\Desktop\PROJECTS\Project\uploads'
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 cloudinary.config(
   cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
@@ -32,7 +35,7 @@ db.init_app(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-# login_manager.login_view = 'login'
+
 
 @login_manager.unauthorized_handler
 def unauthorized():
@@ -43,8 +46,8 @@ def unauthorized():
 def send_verification_email(to_email, code):
     smtp_server = "smtp.gmail.com"
     smtp_port = 587
-    sender_email = "no.reply.TestingBasedEmail@gmail.com"
-    sender_password = "wcezljjvlhfibzxj"  
+    sender_email = os.getenv('gmail')
+    sender_password = os.getenv('gmail_pass')  
 
     subject = "OTP for E-Mail verification"
     body = f"Your OTP for E-Mail verification is {code} valid only for 2 minutes. Do not share with anyone."
@@ -59,6 +62,23 @@ def send_verification_email(to_email, code):
     server.login(sender_email, sender_password)
     server.sendmail(sender_email, to_email, msg.as_string())
     server.quit()
+
+def generate_discount_coupon(user_id, length_range=(8, 12), min_discount=8, max_discount=10):
+    length = random.randint(*length_range)
+    chars = string.ascii_uppercase + string.digits
+    user_part = f"{user_id:X}"
+    remaining_length = length - len(user_part)
+
+    if remaining_length <= 0:
+        code = user_part[:length]
+    else:
+        random_part = ''.join(random.choices(chars, k=remaining_length))
+        code_list = list(user_part + random_part)
+        random.shuffle(code_list)
+        code = ''.join(code_list)
+
+    discount = random.randint(min_discount, max_discount)
+    return code, discount
 
 
 @app.route('/')
@@ -89,10 +109,12 @@ def check_email2():
 
     if user:
         otp = str(random.randint(100000, 999999))
+        print(otp)
         session['otp'] = otp
         session['otp_email'] = email
         send_verification_email(email, otp)  
         return jsonify({'exists': True})
+    
 
     return jsonify({'exists': False})
 
@@ -133,7 +155,7 @@ def login():
 
     if not user:
         flash('User not found. Please sign up.', 'warning')
-        return redirect(url_for('signup', email=email))
+        return render_template('signup.html', email=email, gadget = gadget)
 
     return redirect(url_for('show_providers', gadget=gadget))
 
@@ -168,14 +190,16 @@ def providers1():
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     email_prefill = request.args.get('email', '').strip().lower()
+    gadget = request.args.get('gadget', '')
 
     if request.method == 'POST':
         email = request.form.get('email', '').strip().lower()
         mobile = request.form.get('mobile_number', '').strip()
 
         if User.query.filter_by(username=email).first():
-            flash('Email already registered. Please log in.', 'warning')
-            return redirect(url_for('login', email=email))
+            flash('Email already registered. logging In.', 'warning')
+            return redirect(url_for('show_providers', gadget = gadget))
+
 
         new_user = User(username=email, mobile_number=mobile)
         db.session.add(new_user)
@@ -183,32 +207,12 @@ def signup():
 
         
         flash('Account created and logged in.', 'success')
-        return redirect(url_for('provider_profile'))
+        login_user(new_user)
+        return redirect(url_for('show_providers', gadget = gadget))
 
     return render_template('signup.html', email=email_prefill)
 
 
-
-@app.route('/provider/verify_email', methods=['POST'])
-def verify_email():
-    username = request.form.get('username')  
-    if not username:
-        return jsonify({"error": "Username is required"}), 400
-
-    provider = ServiceProvider.query.filter_by(username=username).first()
-
-    if not provider:
-        flash("Provider not found", "error")
-        return redirect(url_for('verify_email'))
-
-    code = str(random.randint(100000, 999999))
-    session['verification_code'] = code
-    session['username'] = username
-
-    send_verification_email(provider.email, code)
-
-    flash("Verification code sent to your email.", "info")
-    return render_template('verify.html')
 
 
 
@@ -303,7 +307,6 @@ def user_appointments():
         elif a.status in grouped:
             grouped[a.status].append(item)
         else:
-            # fallback in case of unexpected status
             grouped['New'].append(item)
 
     return jsonify(grouped)
@@ -456,5 +459,62 @@ def download_bill(appointment_id):
     response.headers['Content-Disposition'] = f'attachment; filename=bill_{appointment.id}.pdf'
     return response
 
-if __name__ == '__main__':
-    app.run()
+@app.route('/payment_confirm_user', methods=['POST'])
+def payment_confirm_user():
+    data = request.get_json()
+    provider_secret = data.get('provider_secret')
+    USER_BACKEND_SECRET = os.getenv('Secret_key_user')
+
+    if provider_secret != USER_BACKEND_SECRET:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    appointment_id = data.get("appointment_id")
+    user_id = data.get("user_id")
+    payment_id = data.get("payment_id")
+
+    appointment = Appointment.query.get(appointment_id)
+    if not appointment:
+        return jsonify({"error": "Appointment not found"}), 404
+
+    appointment.payment_status = True
+    appointment.payment_id = payment_id
+    db.session.commit()
+
+    
+    coupon_code, discount = generate_discount_coupon(user_id)
+    expiry_date = datetime.utcnow() + timedelta(days=30)
+
+    coupon = Coupon(
+        user_id=user_id,
+        appointment_id=appointment_id,
+        coupon_code=coupon_code,
+        expiry_date=expiry_date,
+        status="unused",
+        discount=discount
+    )
+    db.session.add(coupon)
+    db.session.commit()
+
+    
+    socketio.emit(
+        'payment_success_coupon',
+        {
+            "coupon_code": coupon.coupon_code,
+            "expiry_date": expiry_date.strftime("%Y-%m-%d"),
+            "discount": coupon.discount
+        },
+        room=f"user_{user_id}"
+    )
+
+    return jsonify({
+        "message": "Payment confirmed and coupon sent via socket"
+    })
+
+# --- Socket room join ---
+@socketio.on('join_room')
+def handle_join(data):
+    user_id = data.get('user_id')
+    join_room(f"user_{user_id}")
+
+if __name__ == "__main__":
+    socketio.run(app)
