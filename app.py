@@ -42,7 +42,7 @@ def unauthorized():
 
 
 def send_verification_email(to_email, subject, body): 
-    sender= os.getenv("gmail").strip()
+    sender= os.getenv("gmail")
 
     url = os.getenv('url')
     payload = {
@@ -53,7 +53,7 @@ def send_verification_email(to_email, subject, body):
     }
     headers = {
         "accept": "application/json",
-        "api-key": os.getenv('api_key').strip(),
+        "api-key": os.getenv('api_key'),
         "content-type": "application/json"
     }
 
@@ -84,6 +84,10 @@ def generate_discount_coupon(user_id, length_range=(8, 12), min_discount=8, max_
     discount = random.randint(min_discount, max_discount)
     return code, discount
 
+
+@app.route('/support')
+def support():
+    return render_template('support.html')
 
 @app.route('/')
 def landing():
