@@ -1,14 +1,12 @@
-import random, os, string
-import smtplib
 import cloudinary
-from xhtml2pdf import pisa
-from threading import Thread
 from io import BytesIO
-from dotenv import load_dotenv
-from decimal import Decimal
-from datetime import datetime, timedelta
+from xhtml2pdf import pisa
 from sqlalchemy import func
-from email.mime.text import MIMEText
+from decimal import Decimal
+from threading import Thread
+from dotenv import load_dotenv
+import random, os, string, requests
+from datetime import datetime, timedelta
 from flask_socketio import SocketIO, join_room
 from flask import Flask, request, render_template, abort, redirect, flash, url_for, make_response, jsonify, session
 from flask_login import current_user, login_required, LoginManager, login_user, logout_user
@@ -20,7 +18,6 @@ load_dotenv()
 app.secret_key = os.getenv('secret_key')
 
 app.config['SQLALCHEMY_DATABASE_URI'] =  os.getenv('url_db')
-
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 socketio = SocketIO(app, cors_allowed_origins="*")
 
@@ -43,22 +40,26 @@ def unauthorized():
         return jsonify({'error': 'Unauthorized'}), 401
     return redirect(url_for('login', next=request.url))
 
-def send_verification_email(to_email, subject, body):
-    smtp_server = "smtp.gmail.com"
-    smtp_port = 587
-    sender_email = os.getenv('gmail')
-    sender_password = os.getenv('gmail_pass')  
 
-    msg = MIMEText(body)
-    msg['Subject'] = subject
-    msg['From'] = sender_email
-    msg['To'] = to_email
+def send_verification_email(to_email, subject, body): 
+    sender= os.getenv("gmail").strip()
 
-    server = smtplib.SMTP(smtp_server, smtp_port)
-    server.starttls()
-    server.login(sender_email, sender_password)
-    server.sendmail(sender_email, to_email, msg.as_string())
-    server.quit()
+    url = os.getenv('url')
+    payload = {
+        "sender": {"email": sender},
+        "to": [{"email": to_email}],
+        "subject": subject,
+        "htmlContent": body
+    }
+    headers = {
+        "accept": "application/json",
+        "api-key": os.getenv('api_key').strip(),
+        "content-type": "application/json"
+    }
+
+    requests.post(url, json=payload, headers=headers)
+
+
 
 def send_email(email, subject, body):
     thread = Thread(target=send_verification_email, args=(email, subject, body))
@@ -115,10 +116,9 @@ def check_email2():
         session['otp'] = otp
         session['otp_email'] = email
         subject = "OTP for E-Mail verification"
-        body = f"Your OTP for E-Mail verification is {otp} valid only for 2 minutes. Do not share with anyone." 
-        send_email(email, subject, body)  
+        body = f"Your OTP for E-Mail verification is {otp}, valid only for 2 minutes. Do not share with anyone." 
+        send_email(email, subject, body) 
         return jsonify({'exists': True})
-    
 
     return jsonify({'exists': False})
 

@@ -294,6 +294,7 @@
           body: JSON.stringify({ email })
         });
         const data = await res.json();
+        console.log(data);
 
         if (data.exists) {
           currentEmail = email;
