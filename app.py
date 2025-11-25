@@ -2,6 +2,7 @@ import random, os, string
 import smtplib
 import cloudinary
 from xhtml2pdf import pisa
+from threading import Thread
 from io import BytesIO
 from dotenv import load_dotenv
 from decimal import Decimal
@@ -21,7 +22,6 @@ app.secret_key = os.getenv('secret_key')
 app.config['SQLALCHEMY_DATABASE_URI'] =  os.getenv('url_db')
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['UPLOAD_FOLDER'] = r'C:\Users\Pc\Desktop\PROJECTS\Project\uploads'
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 cloudinary.config(
@@ -43,14 +43,11 @@ def unauthorized():
         return jsonify({'error': 'Unauthorized'}), 401
     return redirect(url_for('login', next=request.url))
 
-def send_verification_email(to_email, code):
+def send_verification_email(to_email, subject, body):
     smtp_server = "smtp.gmail.com"
     smtp_port = 587
     sender_email = os.getenv('gmail')
     sender_password = os.getenv('gmail_pass')  
-
-    subject = "OTP for E-Mail verification"
-    body = f"Your OTP for E-Mail verification is {code} valid only for 2 minutes. Do not share with anyone."
 
     msg = MIMEText(body)
     msg['Subject'] = subject
@@ -62,6 +59,12 @@ def send_verification_email(to_email, code):
     server.login(sender_email, sender_password)
     server.sendmail(sender_email, to_email, msg.as_string())
     server.quit()
+
+def send_email(email, subject, body):
+    thread = Thread(target=send_verification_email, args=(email, subject, body))
+    thread.daemon
+    thread.start()
+
 
 def generate_discount_coupon(user_id, length_range=(8, 12), min_discount=8, max_discount=10):
     length = random.randint(*length_range)
@@ -111,7 +114,9 @@ def check_email2():
         otp = str(random.randint(100000, 999999))
         session['otp'] = otp
         session['otp_email'] = email
-        send_verification_email(email, otp)  
+        subject = "OTP for E-Mail verification"
+        body = f"Your OTP for E-Mail verification is {otp} valid only for 2 minutes. Do not share with anyone." 
+        send_email(email, subject, body)  
         return jsonify({'exists': True})
     
 

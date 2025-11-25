@@ -174,6 +174,36 @@
       color: #888;
       margin-top: 1rem;
     }
+
+    #spinner {
+        display: none; 
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #3498db;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        z-index: 1000;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      
+      #overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.3);
+        z-index: 999;
+      }
   </style>
 </head>
 
@@ -209,6 +239,9 @@
         <button type="button" id="checkEmailBtn">Send OTP</button>
       </div>
 
+      <div id="overlay"></div>
+    <div id="spinner"></div>
+
       <div id="otpSection">
         <label for="otpInput">Enter OTP</label>
         <div class="icon-input">
@@ -223,6 +256,8 @@
     <p class="support-text">Need help? Call 1800-123-4567 (Toll-Free)</p>
   </div>
   <script>
+    const spinner = document.getElementById("spinner");
+      const overlay = document.getElementById("overlay");
     const checkEmailBtn = document.getElementById('checkEmailBtn');
     const emailInput = document.getElementById('emailInput');
     const otpSection = document.getElementById('otpSection');
@@ -230,6 +265,16 @@
     const emailLoginForm = document.getElementById('emailLoginForm');
 
     let currentEmail = null;
+
+    function showLoader() {
+        spinner.style.display = "block";
+        overlay.style.display = "block";
+      }
+
+      function hideLoader() {
+        spinner.style.display = "none";
+        overlay.style.display = "none";
+      }
 
     checkEmailBtn.addEventListener('click', async () => {
       const email = emailInput.value.trim();
@@ -240,7 +285,7 @@
       clearError();
       const urlParams = new URLSearchParams(window.location.search);
       const gadget = urlParams.get('gadget') || '';
-      console.log(urlParams)
+      showLoader();
 
       try {
         const res = await fetch('/check_email2', {
@@ -260,6 +305,8 @@
 
       } catch (err) {
         showError('Something went wrong. Please try again.');
+      } finally{
+        hideLoader();
       }
     });
 
