@@ -67,7 +67,7 @@ def send_email(email, subject, body):
     thread.start()
 
 
-def generate_discount_coupon(user_id, length_range=(8, 12), min_discount=8, max_discount=10):
+def generate_discount_coupon(user_id, length_range=(8, 12), min_discount=5, max_discount=10):
     length = random.randint(*length_range)
     chars = string.ascii_uppercase + string.digits
     user_part = f"{user_id:X}"
@@ -486,6 +486,7 @@ def payment_confirm_user():
 
     appointment.payment_status = True
     appointment.payment_id = payment_id
+    appointment.status = "Completed"
     db.session.commit()
 
     

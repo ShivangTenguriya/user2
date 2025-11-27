@@ -381,7 +381,7 @@ function submitReview(appointmentId, button) {
   .then(data => {
     if (data.message) {
       alert('Thank you for your review!');
-      fetchAppointments(); // Refresh the appointment list
+      fetchAppointments(); 
     } else {
       alert(data.error || 'Failed to submit review');
     }
@@ -474,7 +474,7 @@ function insertAppointments(listId, appointments) {
     let rescheduleActions = '';
     console.log(`Appointment ID: ${app.id}, Status: ${app.status}, Payment Status: ${app.payment_status}`);
 
-    // Add Accept/Cancel buttons for Rescheduled
+    
     if (app.status === 'Rescheduled') {
       rescheduleActions = `
         <br>

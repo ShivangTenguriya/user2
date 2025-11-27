@@ -101,7 +101,7 @@ class Appointment(db.Model):
     comment = db.Column(db.Text, nullable=True)
 
     amount = db.Column(db.Integer, nullable = True)
-    order_id = db.Column(db.String(100), nullable=False)
+    order_id = db.Column(db.String(100), nullable=True)
     payment_id = db.Column(db.String(100), nullable=True)
     payment_status = db.Column(db.Boolean, default = False)
 
