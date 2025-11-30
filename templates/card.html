@@ -72,8 +72,7 @@ gradient.addColorStop(1, '#888');
 ctx.fillStyle = gradient;
 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-// Socket setup
-const socket = io("https://127.0.0.1:5000");
+const socket = io("https://customer-0prn.onrender.com");
 socket.emit('join_room', {user_id: USER_ID});
 
 socket.on('payment_success_coupon', (data) => {

@@ -205,8 +205,14 @@ def signup():
         mobile = request.form.get('mobile_number', '').strip()
 
         if User.query.filter_by(username=email).first():
-            flash('Email already registered. logging In.', 'warning')
-            return redirect(url_for('show_providers', gadget = gadget))
+            flash('EMAIL is  already registered. Please login with your credentials.', 'warning')
+            return redirect(url_for('login', gadget = gadget))
+        
+        if User.query.filter_by(mobile_number=mobile):
+            flash('Mobile Number is  already registered. Please login with your credentials.', 'warning')
+            return redirect(url_for('login', gadget = gadget))
+
+
 
 
         new_user = User(username=email, mobile_number=mobile)
@@ -214,9 +220,8 @@ def signup():
         db.session.commit()
 
         
-        flash('Account created and logged in.', 'success')
-        login_user(new_user)
-        return redirect(url_for('show_providers', gadget = gadget))
+        flash('Account created now login to the portal.', 'success')
+        return redirect(url_for('show_provider', gadget = gadget))
 
     return render_template('signup.html', email=email_prefill)
 
@@ -526,4 +531,4 @@ def handle_join(data):
     join_room(f"user_{user_id}")
 
 if __name__ == "__main__":
-    socketio.run(app)
+    socketio.run(app, port=5002)
