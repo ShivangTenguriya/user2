@@ -208,7 +208,8 @@ def signup():
             flash('EMAIL is  already registered. Please login with your credentials.', 'warning')
             return redirect(url_for('login', gadget = gadget))
         
-        if User.query.filter_by(mobile_number=mobile):
+        if User.query.filter_by(mobile_number=mobile).first():
+            print(mobile)
             flash('Mobile Number is  already registered. Please login with your credentials.', 'warning')
             return redirect(url_for('login', gadget = gadget))
 
@@ -221,7 +222,7 @@ def signup():
 
         
         flash('Account created now login to the portal.', 'success')
-        return redirect(url_for('show_provider', gadget = gadget))
+        return redirect(url_for('show_providers', gadget = gadget))
 
     return render_template('signup.html', email=email_prefill)
 
