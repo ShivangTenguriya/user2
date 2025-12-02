@@ -222,7 +222,7 @@ def signup():
 
         
         flash('Account created now login to the portal.', 'success')
-        return redirect(url_for('show_providers', gadget = gadget))
+        return redirect(url_for('login', gadget = gadget))
 
     return render_template('signup.html', email=email_prefill)
 
