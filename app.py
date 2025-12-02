@@ -214,13 +214,9 @@ def signup():
             return redirect(url_for('login', gadget = gadget))
 
 
-
-
         new_user = User(username=email, mobile_number=mobile)
         db.session.add(new_user)
         db.session.commit()
-
-        
         flash('Account created now login to the portal.', 'success')
         return redirect(url_for('login', gadget = gadget))
 
