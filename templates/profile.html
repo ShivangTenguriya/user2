@@ -5,108 +5,69 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>User Profile</title>
   <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      background: #f5f7fa;
-      color: #333;
-    }
 
-    /* Top navbar */
-    nav {
-      background-color: #007bff;
-      padding: 1rem 2rem;
-      color: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 3px 7px rgba(0,0,0,0.15);
-    }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-    nav .logo {
-      font-weight: 700;
-      font-size: 1.5rem;
-      cursor: pointer;
-      user-select: none;
-    }
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  background: #f5f7fa;
+  color: #333;
+  min-height: 100vh;
+  width: 100%;
+  line-height: 1.5;
+}
 
-    nav .profile-nav {
-      display: flex;
-      gap: 1.3rem;
-    }
 
-    nav .profile-nav button {
-      background: transparent;
-      border: none;
-      color: white;
-      font-weight: 600;
-      font-size: 1rem;
-      cursor: pointer;
-      padding: 0.5rem 0.8rem;
-      border-radius: 6px;
-      transition: background-color 0.3s ease;
-    }
-
-    nav .profile-nav button:hover,
-    nav .profile-nav button.active {
-      background-color: rgba(255, 255, 255, 0.25);
-    }
-
-    main {
-      max-width: 900px;
-      margin: 2rem auto;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-      padding: 2rem 2.5rem;
-      min-height: 400px;
-    }
-
-    h2 {
-      color: #007bff;
-      margin-bottom: 1.5rem;
-    }
-
-    /* Example content styling */
-    .request-list {
-      list-style-type: none;
-      padding: 0;
-    }
-
-    .request-list li {
-      border-bottom: 1px solid #ddd;
-      padding: 0.8rem 0;
-      font-size: 1rem;
-    }
-
-    .request-list li:last-child {
-      border-bottom: none;
-    }
-
-    /* Edit profile form */
-    form label {
-      display: block;
-      margin: 1rem 0 0.4rem;
-      font-weight: 600;
-    }
-
-    header {
+nav, header {
   background-color: #007bff;
   color: white;
   padding: 1rem 2rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
-  /* Added to align items properly */
-  justify-content: flex-start;
+  justify-content: space-between;
+  box-shadow: 0 3px 7px rgba(0,0,0,0.15);
+  flex-wrap: wrap;
+  border-radius: 0 0 12px 12px;
+  transition: all 0.3s ease;
 }
 
-header button {
+nav .logo, header h1 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
+}
+
+nav .profile-nav {
+  display: flex;
+  gap: 1.3rem;
+  flex-wrap: wrap;
+}
+
+nav .profile-nav button, header button {
   background: transparent;
   border: none;
   color: white;
-  font-size: 1.5rem;
+  font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+nav .profile-nav button:hover,
+nav .profile-nav button.active,
+header button:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+header button {
+  font-size: 1.5rem;
   flex-shrink: 0;
 }
 
@@ -114,14 +75,60 @@ header h1 {
   margin: 0;
   flex-grow: 1;
   text-align: center;
-  font-weight: 600;
-  font-size: 1.5rem;
-  user-select: none;
 }
 
-.company-logo {
-  flex-shrink: 0;
+
+main {
+  max-width: 900px;
+  margin: 2rem auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  padding: 2rem 2.5rem;
+  min-height: 400px;
 }
+
+
+form label {
+  display: block;
+  margin: 1rem 0 0.4rem;
+  font-weight: 600;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="tel"],
+form textarea {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border: 1.7px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+form input:focus, form textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+form button {
+  margin-top: 1.5rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.9rem 2rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+form button:hover {
+  background-color: #0056b3;
+}
+
 
 .review-form {
   margin-top: 1rem;
@@ -144,7 +151,6 @@ header h1 {
 
 .review-form textarea {
   display: block;
-  width: 100%;
   margin-top: 0.5rem;
   padding: 0.5rem;
   font-size: 1rem;
@@ -168,39 +174,69 @@ header h1 {
 }
 
 
-    form input[type="text"],
-    form input[type="email"],
-    form input[type="tel"] {
-      width: 100%;
-      padding: 0.6rem 1rem;
-      border: 1.7px solid #ccc;
-      border-radius: 8px;
-      font-size: 1rem;
-      transition: border-color 0.3s ease;
-    }
+.request-list {
+  list-style-type: none;
+  padding: 0;
+}
 
-    form input:focus {
-      border-color: #007bff;
-      outline: none;
-    }
+.request-list li {
+  border-bottom: 1px solid #ddd;
+  padding: 0.8rem 0;
+  font-size: 1rem;
+}
 
-    form button {
-      margin-top: 1.5rem;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      padding: 0.9rem 2rem;
-      font-weight: 700;
-      font-size: 1.1rem;
-      border-radius: 25px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
+.request-list li:last-child {
+  border-bottom: none;
+}
 
-    form button:hover {
-      background-color: #0056b3;
-    }
-  </style>
+@media(max-width: 768px) {
+  main {
+    padding: 1.5rem 2rem;
+    margin: 1rem;
+  }
+
+  nav, header {
+    padding: 0.8rem 1.5rem;
+    justify-content: center;
+  }
+
+  nav .profile-nav button, header button {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.95rem;
+  }
+
+  header h1 {
+    font-size: 1.3rem;
+  }
+}
+
+@media(max-width: 480px) {
+  main {
+    padding: 1rem 1.2rem;
+    margin: 0.5rem;
+  }
+
+  header h1 {
+    font-size: 1.1rem;
+  }
+
+  nav .profile-nav {
+    flex-direction: column;
+    gap: 0.6rem;
+    width: 100%;
+  }
+
+  form button {
+    width: 100%;
+    padding: 0.8rem 0;
+  }
+
+  .review-form .stars {
+    font-size: 1.3rem;
+  }
+}
+</style>
+
 </head>
 <body>
 
@@ -253,6 +289,17 @@ header h1 {
 
   <section id="section-edit" role="tabpanel" aria-labelledby="tab-edit" hidden>
     <h2>Edit Profile</h2>
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+      <div class="flash-container">
+        {% for category, message in messages %}
+          <div class="flash-message {{ category }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
 <form method="POST" action="{{ url_for('profile') }}">
   <label for="full_name">Full Name</label>
   <input
@@ -294,7 +341,6 @@ header h1 {
 <script>
 
   document.addEventListener('DOMContentLoaded', () => {
-  // Request Notification permission if not already granted
   if (Notification.permission !== 'granted') {
     Notification.requestPermission().then(permission => {
       if (permission === 'granted') {
@@ -416,7 +462,6 @@ function fetchAppointments() {
       insertAppointments('cancelledRequestsList', data.Cancelled || []);
       insertAppointments('rescheduledRequestsList', data.Rescheduled || []);
 
-      // Schedule notifications for Pending_Rescheduled appointments in Pending and Rescheduled lists
       if (data.Pending) processAppointments(data.Pending);
       if (data.Rescheduled) processAppointments(data.Rescheduled);
     })
@@ -483,7 +528,6 @@ function insertAppointments(listId, appointments) {
       `;
     }
 
-    // Review form for Completed without review
     if (app.status === 'Completed' && !app.has_reviewed) {
       reviewFormHTML = `
         <div class="review-form" data-appointment-id="${app.id}">
@@ -499,7 +543,7 @@ function insertAppointments(listId, appointments) {
       `;
     }
 
-    // Download Invoice button (only for Completed + paid)
+    
     let downloadButtonHTML = '';
     if (app.status === 'Completed' && app.payment_status) {
       downloadButtonHTML = `<br><button onclick="downloadInvoice(${app.id})">Download Invoice</button>`;
@@ -528,13 +572,12 @@ function insertAppointments(listId, appointments) {
     list.appendChild(li);
   });
 
-  // Setup star rating (existing function)
+
   setupStarRating();
 }
 
-// Download invoice function
 function downloadInvoice(appointmentId) {
-  window.open(`/download_bill/${appointmentId}`, '_blank'); // opens PDF in a new tab
+  window.open(`/download_bill/${appointmentId}`, '_blank'); 
 }
 
 function cancelAppointment(id) {

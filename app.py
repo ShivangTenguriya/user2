@@ -101,6 +101,8 @@ def load_user(user_id):
 def landing_profile():
     return render_template('profile.html', user=current_user)
 
+
+
 @app.route('/logout')
 @login_required
 def logout():
@@ -133,7 +135,6 @@ def verify_otp():
     data = request.get_json()
     email = data.get('email', '').lower()
     otp_submitted = data.get('otp')
-
     otp_saved = session.get('otp')
     otp_email = session.get('otp_email')
 
@@ -143,6 +144,9 @@ def verify_otp():
             login_user(user)
             session.pop('otp')
             session.pop('otp_email')
+            user.latitude = session.get('lat')
+            user.longitude = session.get('lon')
+            db.session.commit()
             return jsonify({'success': True})
         if not user:
             flash('User not found. Please sign up.', 'warning')
@@ -152,20 +156,10 @@ def verify_otp():
 
 @app.route('/login')
 def login():
-    email = request.args.get('email', '').strip().lower()
     gadget = request.args.get('gadget', '')
-
-    if not email:
-        flash('Email is required.', 'danger')
-        return redirect(url_for('login_form', gadget=gadget))  
-
-    user = User.query.filter_by(username=email).first()
-
-    if not user:
-        flash('User not found. Please sign up.', 'warning')
-        return render_template('signup.html', email=email, gadget = gadget)
-
-    return redirect(url_for('show_providers', gadget=gadget))
+    session['lat'] = request.args.get('lat')
+    session['lon'] = request.args.get('lon')
+    return redirect(url_for('login_form', gadget=gadget))  
 
 
 
@@ -174,24 +168,7 @@ def login_form():
     gadget = request.args.get('gadget', '')
     if current_user.is_authenticated:
         return redirect(url_for('show_providers', gadget=gadget))
-    return render_template('user_login.html')
-
-
-
-@app.route('/providers1')
-@login_required
-def providers1():
-    user_lat = request.args.get('lat', type=float)
-    user_lon = request.args.get('lon', type=float)
-    gadget = request.args.get('gadget', default='')
-
-    if user_lat is None or user_lon is None:
-        flash("Location info is required to see nearby providers.", "warning")
-        return redirect(url_for('some_page_to_get_location'))
-
-    providers = ServiceProvider.query.filter_by(approved=True).all()
-
-    return render_template('providers.html', providers=providers, gadget=gadget)
+    return render_template('user_login.html', )
 
 
 
@@ -221,9 +198,6 @@ def signup():
         return redirect(url_for('login', gadget = gadget))
 
     return render_template('signup.html', email=email_prefill)
-
-
-
 
 
 @app.route('/providers', methods=['GET', 'POST'])
@@ -380,19 +354,35 @@ def profile():
         full_name = request.form.get('full_name', '').strip()
         email = request.form.get('email', '').strip().lower()
         phone = request.form.get('phone', '').strip()
+
         if not full_name or not email or not phone:
             flash('All fields are required.', 'danger')
             return redirect(url_for('profile'))
 
-        
-        current_user.username = email  
-        current_user.mobile_number = phone
+        existing_email = User.query.filter(
+            User.username == email,
+            User.id != current_user.id
+        ).first()
+        if existing_email:
+            flash('This email is already registered with another account.', 'warning')
+            return redirect(url_for('profile'))
 
+        existing_phone = User.query.filter(
+            User.mobile_number == phone,
+            User.id != current_user.id
+        ).first()
+        if existing_phone:
+            flash('This phone number is already registered with another account.', 'warning')
+            return redirect(url_for('profile'))
+
+        current_user.username = email
+        current_user.mobile_number = phone
         db.session.commit()
         flash('Profile updated successfully!', 'success')
         return redirect(url_for('profile'))
 
     return render_template('profile.html', user=current_user)
+
 
 
 
@@ -521,11 +511,11 @@ def payment_confirm_user():
         "message": "Payment confirmed and coupon sent via socket"
     })
 
-# --- Socket room join ---
+
 @socketio.on('join_room')
 def handle_join(data):
     user_id = data.get('user_id')
     join_room(f"user_{user_id}")
 
 if __name__ == "__main__":
-    socketio.run(app, port=5002)
+    socketio.run(app)

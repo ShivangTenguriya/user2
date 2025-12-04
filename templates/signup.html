@@ -163,12 +163,43 @@
       color: #7b7b7b;
     }
 
+    @media(max-width: 768px) {
+  .signup-container {
+    padding: 2rem 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  .navbar-left .company-name {
+    font-size: 1.1rem;
+  }
+}
+
+@media(max-width: 480px) {
+  .signup-container {
+    padding: 1.5rem 1rem;
+    width: 95%;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+  }
+
+  .navbar-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}
+
+
   </style>
 </head>
 
 <body>
 
-  <!-- NAVBAR -->
   <header class="navbar">
     <div class="navbar-left">
       <img src="{{ url_for('static', filename='C.png') }}" class="logo" alt="Company Logo" />
@@ -182,7 +213,7 @@
     </div>
   </header>
 
-  <!-- SIGN-UP CARD -->
+
   <div class="signup-container">
     <h2><i class="fas fa-user-plus"></i>Sign Up</h2>
 

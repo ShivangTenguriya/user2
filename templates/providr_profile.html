@@ -4,200 +4,235 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{{ provider.name }} - Profile</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-      margin: 0;
-      background: #f9f9f9;
-      color: #333;
-    }
+<style>
+body {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  margin: 0;
+  background: #f9f9f9;
+  color: #333;
+}
 
-    header {
-      background-color: #007bff;
-      color: white;
-      padding: 1rem 2rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
+header {
+  background-color: #007bff;
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
 
-    header button {
-      background: transparent;
-      border: none;
-      color: white;
-      font-size: 1.2rem;
-      cursor: pointer;
-    }
+header button {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
 
-    main {
-      padding: 2rem;
-      max-width: 1000px;
-      margin: auto;
-      background: white;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
-      border-radius: 10px;
-    }
+main {
+  padding: 2rem;
+  max-width: 1000px;
+  margin: auto;
+  background: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  border-radius: 10px;
+}
 
-    .profile-header {
-      display: flex;
-      gap: 2rem;
-      align-items: flex-start;
-    }
+.profile-header {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
 
-    .info h2 {
-      margin: 0 0 0.5rem;
-      color: #007bff;
-    }
+.info h2 {
+  margin: 0 0 0.5rem;
+  color: #007bff;
+}
 
-    .info p {
-      margin: 0.3rem 0;
-    }
+.info p {
+  margin: 0.3rem 0;
+}
 
-    .gallery {
-      margin-top: 2rem;
-    }
+.gallery {
+  margin-top: 2rem;
+}
 
-    .gallery h3 {
-      margin-bottom: 1rem;
-    }
+.gallery h3 {
+  margin-bottom: 1rem;
+}
 
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-    }
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
 
-    .gallery-item {
-      background: #f1f1f1;
-      padding: 0.5rem;
-      border-radius: 8px;
-      cursor: pointer;
-    }
+.gallery-item {
+  background: #f1f1f1;
+  padding: 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
 
-    .gallery-item img {
-      width: 100%;
-      height: 160px;
-      object-fit: cover;
-      border-radius: 6px;
-      transition: transform 0.3s ease;
-    }
+.gallery-item img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 6px;
+  transition: transform 0.3s ease;
+}
 
-    .gallery-item:hover img {
-      transform: scale(1.02);
-    }
+.gallery-item:hover img {
+  transform: scale(1.02);
+}
 
-    .gallery-item p {
-      margin: 0.5rem 0 0;
-      font-size: 0.9rem;
-      color: #555;
-    }
+.gallery-item p {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  color: #555;
+}
 
-    .btn-book {
-      display: inline-block;
-      margin-top: 1rem;
-      background-color: #007bff;
-      color: white;
-      padding: 0.5rem 1.2rem;
-      border: none;
-      border-radius: 25px;
-      font-size: 1rem;
-      cursor: pointer;
-    }
+.btn-book {
+  display: inline-block;
+  margin-top: 1rem;
+  background-color: #007bff;
+  color: white;
+  padding: 0.5rem 1.2rem;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+}
 
-    .btn-book:hover {
-      background-color: #0056b3;
-    }
+.btn-book:hover {
+  background-color: #0056b3;
+}
 
-    /* Lightbox styles */
-    #lightbox {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
+#lightbox {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
 
-    #lightbox img {
-      max-width: 90%;
-      max-height: 80%;
-      border-radius: 10px;
-    }
+#lightbox img {
+  max-width: 90%;
+  max-height: 80%;
+  border-radius: 10px;
+}
 
-    #lightbox .close {
-      position: absolute;
-      top: 20px;
-      right: 30px;
-      font-size: 2rem;
-      color: white;
-      cursor: pointer;
-    }
+#lightbox .close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 2rem;
+  color: white;
+  cursor: pointer;
+}
 
-    /* Booking Modal */
-    #bookingModal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
-      justify-content: center;
-      align-items: center;
-      z-index: 9998;
-    }
+#bookingModal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 9998;
+}
 
-    #bookingModal.active {
-      display: flex;
-    }
+#bookingModal.active {
+  display: flex;
+}
 
-    #bookingModal > div {
-      background: white;
-      padding: 2rem;
-      border-radius: 10px;
-      max-width: 450px;
-      width: 90%;
-      position: relative;
-    }
+#bookingModal > div {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  max-width: 450px;
+  width: 90%;
+  position: relative;
+}
 
-    #closeModal {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 1.5rem;
-      background: none;
-      border: none;
-      cursor: pointer;
-    }
+#closeModal {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
 
-    #bookingModal label {
-      display: block;
-      margin: 1rem 0 0.3rem;
-    }
+#bookingModal label {
+  display: block;
+  margin: 1rem 0 0.3rem;
+}
 
-    #bookingModal input[type="date"],
-    #bookingModal input[type="datetime-local"],
-    #bookingModal textarea {
-      width: 100%;
-      padding: 0.5rem;
-      font-size: 1rem;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
+#bookingModal input[type="date"],
+#bookingModal input[type="datetime-local"],
+#bookingModal textarea {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
 
-    #bookingModal button[type="submit"] {
-      margin-top: 1rem;
-      background: #007bff;
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      cursor: pointer;
-      width: 100%;
-    }
+#bookingModal button[type="submit"] {
+  margin-top: 1rem;
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+}
 
-    #bookingModal button[type="submit"]:hover {
-      background: #0056b3;
-    }
-  </style>
+#bookingModal button[type="submit"]:hover {
+  background: #0056b3;
+}
+
+@media(max-width: 768px) {
+  main {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  #bookingModal > div {
+    max-width: 90%;
+    padding: 1.5rem;
+  }
+}
+
+@media(max-width: 480px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .gallery-item img {
+    height: 140px;
+  }
+
+  .btn-book {
+    width: 100%;
+    text-align: center;
+  }
+}
+</style>
+
 </head>
 <body>
 
@@ -233,13 +268,11 @@
   {% endif %}
 </main>
 
-<!-- Lightbox -->
 <div id="lightbox" onclick="closeLightbox()">
   <span class="close">&times;</span>
   <img id="lightboxImg" src="" alt="Enlarged image" />
 </div>
 
-<!-- Booking Modal -->
 <div id="bookingModal">
   <div>
     <button id="closeModal">&times;</button>

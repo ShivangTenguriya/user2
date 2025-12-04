@@ -6,48 +6,69 @@
   <title>Find Repair Service Near You</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
-    * {
+
+* {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #f5f7fa;
-  margin: 0;
-  padding-top: 70px; /* Space for navbar */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 1rem;
   color: #333;
+  line-height: 1.5;
+  padding-top: 70px; 
 }
 
-.navbar {
+
+header, .navbar {
   width: 100%;
   position: fixed;
   top: 0;
   left: 0;
-  background: #007bff;
+  background-color: #007bff;
   color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0.7rem 1.5rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
   z-index: 1000;
+  flex-wrap: wrap;
+}
+
+header h1, .company-name {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.5rem;
+  text-align: center;
+  flex-grow: 1;
+}
+
+header button, .navbar-right .support-link {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+header button:hover, .navbar-right .support-link:hover {
+  color: #dbe9ff;
 }
 
 .navbar-left {
   display: flex;
   align-items: center;
+  gap: 0.5rem;
 }
 
 .logo {
   height: 40px;
   width: 40px;
   border-radius: 50%;
-  margin-right: 10px;
 }
 
 .company-name {
@@ -56,16 +77,6 @@ body {
   color: white;
 }
 
-.navbar-right .support-link {
-  font-size: 0.9rem;
-  color: #e6f2ff;
-  cursor: pointer;
-  transition: color 0.2s;
-}
-
-.navbar-right .support-link:hover {
-  color: #cce5ff;
-}
 
 .container {
   background: white;
@@ -74,6 +85,7 @@ body {
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
   max-width: 400px;
   width: 100%;
+  margin: 2rem auto;
   text-align: center;
   transition: transform 0.3s ease;
 }
@@ -95,7 +107,7 @@ h1 {
   color: #444;
 }
 
-select {
+select, input[type="text"], input[type="password"], input[type="email"], input[type="number"] {
   width: 100%;
   padding: 0.8rem 1rem;
   font-size: 1rem;
@@ -105,19 +117,23 @@ select {
   font-family: inherit;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   appearance: none;
+}
+
+select {
   background: white
     url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><polygon points="6,9 12,15 18,9" fill="%23777"/></svg>')
     no-repeat right 1rem center / 1rem auto;
   cursor: pointer;
 }
 
-select:focus {
+select:focus, input:focus {
   border-color: #0056b3;
   box-shadow: 0 0 4px rgba(0, 86, 179, 0.4);
   outline: none;
 }
 
-button {
+
+button, .btn-book {
   background-color: #007bff;
   color: white;
   font-size: 1.1rem;
@@ -130,6 +146,8 @@ button {
   transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s;
   user-select: none;
   display: inline-block;
+  text-decoration: none;
+  text-align: center;
 }
 
 button:disabled {
@@ -137,7 +155,7 @@ button:disabled {
   cursor: not-allowed;
 }
 
-button:hover:not(:disabled) {
+button:hover:not(:disabled), .btn-book:hover {
   background-color: #0056b3;
   box-shadow: 0 4px 12px rgba(0, 86, 179, 0.4);
   transform: translateY(-2px);
@@ -147,6 +165,7 @@ button:active:not(:disabled) {
   transform: translateY(1px);
   box-shadow: 0 2px 6px rgba(0, 86, 179, 0.6);
 }
+
 
 .loading-spinner {
   border: 4px solid #f3f3f3;
@@ -169,33 +188,141 @@ button:active:not(:disabled) {
   font-weight: 600;
 }
 
-/* Responsive tweaks */
-@media (max-width: 480px) {
+main {
+  padding: 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.provider-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.provider-card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.07);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.provider-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+}
+
+.provider-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.provider-content {
+  padding: 1rem 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.provider-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  color: #007bff;
+}
+
+.provider-skills {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.rating {
+  color: #f5b301;
+  margin-bottom: 0.7rem;
+}
+
+.rating .star {
+  font-size: 1.3rem;
+  color: #ffcc00;
+  margin-right: 2px;
+}
+
+.location {
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: 0.3rem;
+}
+
+
+@media(max-width: 768px) {
+  .container {
+    padding: 1.8rem 2rem;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  button, .btn-book {
+    font-size: 1rem;
+    padding: 0.8rem 1.8rem;
+  }
+
+  main {
+    padding: 1.5rem;
+  }
+}
+
+@media(max-width: 480px) {
+  body {
+    padding-top: 60px;
+  }
+
+  header h1, .company-name {
+    font-size: 1.2rem;
+  }
+
   .container {
     padding: 1.5rem 1.5rem;
   }
 
   h1 {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
   }
 
-  button {
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
+  select, input[type="text"], input[type="password"], input[type="email"], input[type="number"] {
+    font-size: 0.95rem;
+    padding: 0.7rem 1rem;
+  }
+
+  button, .btn-book {
+    font-size: 0.95rem;
+    padding: 0.7rem 1.5rem;
+  }
+
+  .navbar-left {
+    margin-bottom: 0.5rem;
   }
 }
+</style>
 
-  </style>
+
 </head>
 <body>
 
-  <!-- Navbar -->
+  
   <header class="navbar">
     <div class="navbar-left">
       <img src="{{ url_for('static', filename='C.png') }}" alt="Company Logo" class="logo" />
       <span class="company-name">Care n Trust</span>
     </div>
-    <div class="navbar-right">
       <div class="navbar-right">
         <span class="support-link" onclick="window.location.href='/support'">
           Support
@@ -203,7 +330,6 @@ button:active:not(:disabled) {
     </div>
   </header>
 
-  <!-- Main Container -->
   <div class="container">
     <h1>Find Repair Service Near You</h1>
 
@@ -291,7 +417,6 @@ button:active:not(:disabled) {
 
       const url = `/login?lat=${encodeURIComponent(userLatitude)}&lon=${encodeURIComponent(userLongitude)}&gadget=${encodeURIComponent(gadgetSelect.value)}`;
       window.location.href = url;
-      console.log(url);
     });
   </script>
 
