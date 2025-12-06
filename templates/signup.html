@@ -8,9 +8,9 @@
 
   <style>
     :root {
-      --primary: #007bff;
-      --primary-dark: #0057c4;
-      --bg-light: #f0f7ff;
+      /* --primary: #000000; */
+      --primary-dark:   color: #d1dbdd;
+      --bg-light: #000000;
       --card-radius: 18px;
       --font: 'Segoe UI', sans-serif;
     }
@@ -23,7 +23,7 @@
 
     body {
       font-family: var(--font);
-      background: linear-gradient(135deg, #e7f1ff, #ffffff 40%);
+      background: linear-gradient(135deg, #000000, #000000 40%);
       min-height: 100vh;
       display: flex;
       justify-content: center;
@@ -37,13 +37,13 @@
       position: fixed;
       top: 0;
       left: 0;
-      background: var(--primary);
+      background: #322b2bc2;
       color: white;
-      padding: 0.8rem 1.5rem;
+      padding: 0.7rem 1.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      border-bottom: 2.5px solid rgba(255, 255, 255, 0.2);
       box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
       z-index: 1000;
     }
@@ -51,26 +51,26 @@
     .navbar-left {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 0.5rem;
     }
 
     .logo {
-      width: 45px;
-      height: 45px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
-      border: 2px solid white;
-      object-fit: cover;
+      /* border: 2px solid rgb(0, 0, 0); */
+      /* object-fit: cover; */
     }
 
     .company-name {
-      font-size: 1.3rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-    }
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: rgb(255, 255, 255);
+  }
 
     .support-link {
       color: #eaf4ff;
-      font-size: 0.9rem;
+      font-size: 1.0rem;
       cursor: pointer;
       transition: 0.2s;
     }
@@ -80,13 +80,13 @@
     }
 
     .signup-container {
-      background: white;
+      background: rgb(0, 0, 0);
       padding: 2.3rem 2rem;
       width: 100%;
       max-width: 420px;
       border-radius: var(--card-radius);
-      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
-      animation: fadeIn 0.6s ease;
+      box-shadow: 0 12px 35px rgba(170, 203, 200, 0.763);
+      animation: fadeIn 0.3s ease;
     }
 
     @keyframes fadeIn {
@@ -97,7 +97,7 @@
     h2 {
       text-align: center;
       margin-bottom: 1.8rem;
-      color: var(--primary-dark);
+      color: #d1dbdd;
       font-size: 1.7rem;
       font-weight: 700;
       letter-spacing: 0.5px;
@@ -110,7 +110,7 @@
 
     label {
       font-weight: 600;
-      color: #333;
+      color: #b1c4c9;
       font-size: 0.95rem;
       margin-bottom: 6px;
       display: block;
@@ -121,7 +121,7 @@
       width: 100%;
       padding: 0.85rem 1rem;
       border: 1.6px solid #cdd7e3;
-      border-radius: 12px;
+      border-radius: 25px;
       font-size: 1rem;
       background: #f9fbff;
       transition: 0.25s border ease, 0.25s box-shadow ease;
@@ -138,7 +138,7 @@
    
     button {
       width: 100%;
-      background: var(--primary);
+      background: #97bac0;
       border: none;
       color: white;
       padding: 0.9rem;
@@ -157,10 +157,10 @@
 
     
     .support-text {
+      font-size: 0.8rem;
       text-align: center;
-      margin-top: 1.3rem;
-      font-size: 0.85rem;
-      color: #7b7b7b;
+      color: #d1dbdd;
+      margin-top: 1.0rem;
     }
 
     @media(max-width: 768px) {
@@ -173,7 +173,7 @@
   }
 
   .navbar-left .company-name {
-    font-size: 1.1rem;
+    font-size: 1.4rem;
   }
 }
 

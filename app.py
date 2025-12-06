@@ -1,7 +1,8 @@
 import cloudinary
 from io import BytesIO
 from xhtml2pdf import pisa
-from sqlalchemy import func
+from math import cos, radians
+from sqlalchemy import func, text
 from decimal import Decimal
 from threading import Thread
 from dotenv import load_dotenv
@@ -200,11 +201,63 @@ def signup():
     return render_template('signup.html', email=email_prefill)
 
 
-@app.route('/providers', methods=['GET', 'POST'])
+@app.route('/providers', methods=['GET'])
 def show_providers():
-    gadget = request.args.get('gadget', '')
-    providers = ServiceProvider.query.filter_by(approved=True).all()
-    return render_template('main.html', providers=providers, gadget = gadget)
+    user_lat = float(session.get('lat'))
+    user_lng = float(session.get('lon'))
+    radius = request.args.get('radius', 20, type=float) 
+
+    providers = []
+
+    if user_lat is not None and user_lng is not None:
+        lat_range = radius / 111
+        lng_range = radius / (111 * cos(radians(user_lat)))
+
+        lat_min = user_lat - lat_range
+        lat_max = user_lat + lat_range
+        lng_min = user_lng - lng_range
+        lng_max = user_lng + lng_range
+
+        query = text("""
+                SELECT * FROM (
+                    SELECT sp.*, 
+                        (6371 * acos(
+                            cos(radians(:user_lat)) * cos(radians(sp.latitude)) *
+                            cos(radians(sp.longitude) - radians(:user_lng)) +
+                            sin(radians(:user_lat)) * sin(radians(sp.latitude))
+                        )) AS distance
+                    FROM service_provider sp
+                    WHERE sp.approved = TRUE
+                    AND sp.latitude BETWEEN :lat_min AND :lat_max
+                    AND sp.longitude BETWEEN :lng_min AND :lng_max
+                ) AS sub
+                WHERE distance <= :radius
+                ORDER BY distance ASC;
+            """)
+
+        result = db.session.execute(query, {
+            'user_lat': user_lat,
+            'user_lng': user_lng,
+            'radius': radius,
+            'lat_min': lat_min,
+            'lat_max': lat_max,
+            'lng_min': lng_min,
+            'lng_max': lng_max
+        }).fetchall()
+
+        providers = [dict(row._mapping) for row in result]
+    else:
+        providers_db = ServiceProvider.query.filter_by(approved=True).all()
+        for p in providers_db:
+            providers.append({
+                "id": p.id,
+                "name": p.name,
+                "skills": p.skills,
+                "address": p.address,
+                "distance": None
+            })
+
+    return render_template('main.html', providers=providers)
 
 
 @app.route('/provider/<int:provider_id>')
@@ -356,30 +409,26 @@ def profile():
         phone = request.form.get('phone', '').strip()
 
         if not full_name or not email or not phone:
-            flash('All fields are required.', 'danger')
-            return redirect(url_for('profile'))
+            return jsonify({'message': 'All fields are required.', 'category': 'warning'})
 
         existing_email = User.query.filter(
             User.username == email,
             User.id != current_user.id
         ).first()
         if existing_email:
-            flash('This email is already registered with another account.', 'warning')
-            return redirect(url_for('profile'))
+            return jsonify({'message': 'EMAIl is already registered.', 'category': 'warning'})
 
         existing_phone = User.query.filter(
             User.mobile_number == phone,
             User.id != current_user.id
         ).first()
         if existing_phone:
-            flash('This phone number is already registered with another account.', 'warning')
-            return redirect(url_for('profile'))
+            return jsonify({'message': 'Mobile Number is already registered.', 'category': 'warning'})
 
         current_user.username = email
         current_user.mobile_number = phone
         db.session.commit()
-        flash('Profile updated successfully!', 'success')
-        return redirect(url_for('profile'))
+        return jsonify({'message': 'Profile updated successfully!', 'category': 'success'})
 
     return render_template('profile.html', user=current_user)
 

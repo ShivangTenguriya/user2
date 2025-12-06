@@ -132,3 +132,5 @@ class Coupon(db.Model):
     status = db.Column(db.String(20), default="unused")   
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
+
+

@@ -15,9 +15,13 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f5f7fa;
+  background: #000000;
   color: #333;
   line-height: 1.5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
   padding-top: 70px; 
 }
 
@@ -27,13 +31,14 @@ header, .navbar {
   position: fixed;
   top: 0;
   left: 0;
-  background-color: #007bff;
-  color: white;
+  background-color: #322b2bc2;
+  color: rgb(196, 164, 164);
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0.7rem 1.5rem;
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  border-bottom: 2.5px solid rgba(255, 255, 255, 0.2);
   z-index: 1000;
   flex-wrap: wrap;
 }
@@ -49,8 +54,8 @@ header h1, .company-name {
 header button, .navbar-right .support-link {
   background: transparent;
   border: none;
-  color: white;
-  font-size: 1.2rem;
+  color: rgb(255, 255, 255);
+  font-size: 1.0rem;
   cursor: pointer;
   transition: color 0.3s ease;
 }
@@ -72,20 +77,20 @@ header button:hover, .navbar-right .support-link:hover {
 }
 
 .company-name {
-  font-size: 1.2rem;
-  font-weight: bold;
+  font-size: 1.4rem;
+  font-weight: bold; 
   color: white;
 }
 
 
 .container {
-  background: white;
+  background: #000000;
   padding: 2rem 2.5rem;
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-  max-width: 400px;
+  box-shadow: 0 10px 30px rgba(170, 203, 200, 0.763);
+  max-width: 800px;
   width: 100%;
-  margin: 2rem auto;
+  margin: 8.5rem auto;
   text-align: center;
   transition: transform 0.3s ease;
 }
@@ -95,7 +100,7 @@ header button:hover, .navbar-right .support-link:hover {
 }
 
 h1 {
-  color: #007bff;
+  color: #ffffff;
   margin-bottom: 1.5rem;
   font-weight: 700;
   font-size: 1.8rem;
@@ -104,7 +109,7 @@ h1 {
 .info {
   margin-bottom: 1.5rem;
   font-size: 1rem;
-  color: #444;
+  color: #b8acac;
 }
 
 select, input[type="text"], input[type="password"], input[type="email"], input[type="number"] {
@@ -120,21 +125,21 @@ select, input[type="text"], input[type="password"], input[type="email"], input[t
 }
 
 select {
-  background: white
+  background: rgb(255, 255, 255)
     url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><polygon points="6,9 12,15 18,9" fill="%23777"/></svg>')
     no-repeat right 1rem center / 1rem auto;
   cursor: pointer;
 }
 
 select:focus, input:focus {
-  border-color: #0056b3;
-  box-shadow: 0 0 4px rgba(0, 86, 179, 0.4);
+  border-color: #fbfbfb;
+  box-shadow: 0 0 4px rgb(171, 181, 192);
   outline: none;
 }
 
 
 button, .btn-book {
-  background-color: #007bff;
+  background-color: #013b50;
   color: white;
   font-size: 1.1rem;
   font-weight: 700;
@@ -151,7 +156,7 @@ button, .btn-book {
 }
 
 button:disabled {
-  background-color: #a3c1ff;
+  background-color: #004764;
   cursor: not-allowed;
 }
 
@@ -168,8 +173,8 @@ button:active:not(:disabled) {
 
 
 .loading-spinner {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #007bff;
+  border: 4px solid #970505;
+  border-top: 4px solid #ffffff;
   border-radius: 50%;
   width: 36px;
   height: 36px;
@@ -194,69 +199,11 @@ main {
   margin: 0 auto;
 }
 
-.provider-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-}
 
-.provider-card {
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.07);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.3s ease;
-  cursor: pointer;
-}
-
-.provider-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 28px rgba(0,0,0,0.12);
-}
-
-.provider-image {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-}
-
-.provider-content {
-  padding: 1rem 1.5rem;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.provider-name {
-  font-size: 1.2rem;
-  font-weight: 700;
-  margin-bottom: 0.25rem;
-  color: #007bff;
-}
-
-.provider-skills {
-  font-size: 0.95rem;
-  color: #555;
-  margin-bottom: 0.5rem;
-}
-
-.rating {
-  color: #f5b301;
-  margin-bottom: 0.7rem;
-}
-
-.rating .star {
-  font-size: 1.3rem;
-  color: #ffcc00;
-  margin-right: 2px;
-}
 
 .location {
   font-size: 0.9rem;
-  color: #888;
+  color: #d10101;
   margin-bottom: 0.3rem;
 }
 
