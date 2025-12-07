@@ -217,7 +217,7 @@ def show_providers():
         lat_max = user_lat + lat_range
         lng_min = user_lng - lng_range
         lng_max = user_lng + lng_range
-
+        
         query = text("""
                 SELECT * FROM (
                     SELECT sp.*, 
@@ -234,7 +234,6 @@ def show_providers():
                 WHERE distance <= :radius
                 ORDER BY distance ASC;
             """)
-
         result = db.session.execute(query, {
             'user_lat': user_lat,
             'user_lng': user_lng,
@@ -245,7 +244,7 @@ def show_providers():
             'lng_max': lng_max
         }).fetchall()
 
-        providers = [dict(row._mapping) for row in result]
+        providers = [dict(row._mapping) for row in result]   
     else:
         providers_db = ServiceProvider.query.filter_by(approved=True).all()
         for p in providers_db:

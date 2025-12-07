@@ -26,17 +26,18 @@ body {
 
 
 nav, header {
-  background-color: #322b2bc2;
-  color: white;
-  padding: 1rem 2rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  justify-content: space-between;
-  box-shadow: 0 3px 7px rgba(0,0,0,0.15);
-  border-bottom: 2.5px solid rgba(255, 255, 255, 0.2);
-  flex-wrap: wrap;
-  border-radius: 0 0 12px 12px;
+  position: fixed; 
+  background-color: #322b2bc2; 
+  color: white; 
+  width: 100%;
+  padding: 1rem 2rem; 
+  align-items: center; 
+  gap: 1rem; 
+  justify-content: space-between; 
+  box-shadow: 0 3px 7px rgba(0,0,0,0.15); 
+  border-bottom: 2.5px solid rgba(255, 255, 255, 0.2); 
+  flex-wrap: wrap; 
+  border-radius: 0 0 12px 12px; 
   transition: all 0.3s ease;
 }
 
@@ -81,64 +82,120 @@ header h1 {
   text-align: center;
 }
 
+.section-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.section-wrapper h2 {
+  position: sticky;        
+  top: 120px;                  
+  background-color: none; 
+  z-index: 10;              
+  border-bottom: 1px solid #ccc;
+}
+
 .layout {
   display: flex;
   height: 100vh;
 }
 
 
-.sidebar {
-  width: 220px;
-  background: #2c2c2c;
-  padding: 1rem 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 1rem 0;
-}
+.toggle-btn {
+      position: fixed;
+      top: 90px;
+      left: 15px;
+      font-size: 24px;
+      background: rgb(0, 0, 0);
+      color: rgb(255, 255, 255);
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      z-index: 2000;
+    }
+
+  
+    .sidebar {
+      position: fixed;
+      top: 150px;             
+      left: -220px;          
+      width: 220px;
+      height: calc(100vh - 80px);
+      background: #000000;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem 0;      
+      gap: 0.5rem;
+      transition: 0.3s ease;
+      z-index: 1000;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    .menu-item {
+      color: white;
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 12px 20px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .menu-item:hover,
+    .menu-item.active {
+      background: #444;
+    }
+
+    .menu-item i {
+      color: white;
+      margin-right: 8px;
+      padding: 30px;
+    }
+
+    
+    .content {
+      margin-left: 0;
+      padding-top: 130px;
+      transition: margin-left 0.3s ease;
+      min-height: 100vh; 
+      flex: 1;
+    }
+
+    .sidebar.active ~ .content {
+      margin-left: 220px;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
 
 .edit-profile {
-  margin-top: auto; 
-  padding: 1rem;
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  width: auto;
+  padding: 0rem 0rem;
   font-size: 1.5rem;
-  color: rgb(255, 255, 255);
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.menu-item {
-  background: none;
-  border: none;
-  color: white;
-  padding: 1rem;
-  text-align: left;
-  width: 100%;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-.menu-item:hover,
-.menu-item.active {
-  background: #444;
-}
-
-/* Main content */
-.content {
-  flex: 1;
-  padding: 1.5rem;
+  color: #ffffff;
   background: #000000;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  border-radius: 6px;  
+  z-index: 2000;        
 }
-
-/* Sections */
-.section {
-  display: none;
-}
-
-.section.active {
-  display: block;
-}
-
 
 
 main {
@@ -241,17 +298,27 @@ form button:hover {
 .request-list {
   list-style-type: none;
   padding: 0;
+  margin: 0;
+  width: 100%;
+  max-height: calc(100vh - 80px - 100px);  
+  overflow-y: auto;
 }
+
 
 .request-list li {
   border-bottom: 1px solid #ddd;
-  padding: 0.8rem 0;
+  background-color: #1b3747;
+  padding: 0.8rem 1rem;
   font-size: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 
 .request-list li:last-child {
   border-bottom: none;
+  margin-bottom: 0;
 }
+
 
 @media(max-width: 768px) {
   main {
@@ -305,7 +372,7 @@ form button:hover {
 <body>
 
   <nav>
-  <div class="logo-container" onclick="window.location.href='/'" style="display: flex; align-items: center; cursor: pointer; user-select: none;">
+  <div class="logo-container"  style="display: flex; align-items: center; cursor: pointer; user-select: none;">
     <img src="{{ url_for('static', filename='C.png') }}" alt="Company Logo"
      style="height: 40px; width: 40px; margin-right: 0.8rem; border-radius: 50%;" />
 
@@ -315,43 +382,56 @@ form button:hover {
   </div>
 </nav>
 
+
+<button id="toggleSidebar" class="toggle-btn">☰</button>
 <div class="layout">
-  <aside class="sidebar">
+  <aside class="sidebar" id="sidebar">
     <button class="menu-item" data-section="section-new">New Requests</button>
     <button class="menu-item" data-section="section-pending">Pending Requests</button>
     <button class="menu-item" data-section="section-rescheduled">Rescheduled Requests</button>
     <button class="menu-item" data-section="section-completed">Completed Requests</button>
     <button class="menu-item" data-section="section-cancelled">Cancelled Requests</button>
     <button class="menu-item edit-profile" data-section="section-edit">
-  <i class="fa-solid fa-user-pen"></i>
-</button>
+      <i class="fa-solid fa-user-pen"></i>
+    </button>
   </aside>
+
 
 
 <main class="content">
   <section id="section-new" class="section active">
+    <div class="section-wrapper">
       <h2>New Requests</h2>
       <ul class="request-list" id="newRequestsList"></ul>
+  </div>
     </section>
 
     <section id="section-pending" class="section">
+      <div class="section-wrapper">
       <h2>Pending Requests</h2>
       <ul class="request-list" id="pendingRequestsList"></ul>
+    </div>
     </section>
 
     <section id="section-rescheduled" class="section">
+      <div class="section-wrapper">
       <h2>Rescheduled Requests</h2>
       <ul class="request-list" id="rescheduledRequestsList"></ul>
+      </div>
     </section>
 
     <section id="section-completed" class="section">
+      <div class="section-wrapper">
       <h2>Completed Requests</h2>
       <ul class="request-list" id="completedRequestsList"></ul>
+    </div>
     </section>
 
     <section id="section-cancelled" class="section">
+      <div class="section-wrapper">
       <h2>Cancelled Requests</h2>
       <ul class="request-list" id="cancelledRequestsList"></ul>
+      </div>
     </section>
 
 
@@ -394,12 +474,18 @@ form button:hover {
 
   </section>
 </main>
+</div>
 
 <script>
+  document.getElementById("toggleSidebar").addEventListener("click", () => {
+  document.getElementById("sidebar").classList.toggle("active");
+});
 
-  const buttons = document.querySelectorAll(".menu-item");
+const buttons = document.querySelectorAll(".menu-item");
   const sections = document.querySelectorAll(".section");
   const editForm = document.getElementById("editProfileForm");
+
+
 
   buttons.forEach(btn => {
     btn.addEventListener("click", () => {
